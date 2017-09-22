@@ -23,6 +23,9 @@ for(dir2search in dirs2search)
     ### INITIALIZATION OF VECTORS 
     file_vec   <- c()
     defect_vec <- c()
+
+    node_cnt_vec <- c()
+    edge_cnt_vec <- c()
     
     med_in_deg_vec <- c()
     avg_in_deg_vec <- c()      
@@ -66,6 +69,11 @@ for(dir2search in dirs2search)
       defect_vec  <- append(defect_vec, defect_)
 
       # # GET THE METRICS 
+      edge_cnt     <- length(E(net))
+      node_cnt     <- length(V(net)) 
+      node_cnt_vec <- append(node_cnt_vec, node_cnt)
+      edge_cnt_vec <- append(edge_cnt_vec, edge_cnt)
+      
       in_degree_  <- degree(net, mode="in")
       med_in_deg  <- median(in_degree_)
       avg_in_deg  <- mean(in_degree_)
@@ -148,7 +156,8 @@ for(dir2search in dirs2search)
     
     #### NOW APPEND !!! 
     print(dir2search)
-    graph.metric.data <- data.frame(file_vec, med_in_deg_vec, avg_in_deg_vec, 
+    graph.metric.data <- data.frame(file_vec, node_cnt_vec, edge_cnt_vec, 
+                                              med_in_deg_vec, avg_in_deg_vec, 
                                               med_out_deg_vec, avg_out_deg_vec, 
                                               med_all_deg_vec, avg_all_deg_vec, 
                                               assort_vec, dia_vec, 
