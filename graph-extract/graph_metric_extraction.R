@@ -167,6 +167,14 @@ for(dir2search in dirs2search)
                                               med_close_vec, avg_close_vec, modularity_vec, 
                                               defect_vec)
     print(head(graph.metric.data))
+    col_headers <- c('id', 'file_name', 'v_count', 'e_count', 'med_indeg', 'avg_indeg', 'med_outdeg', 'avg_outdeg', 
+                                                              'med_alldeg', 'avg_alldeg', 'assort', 'dia', 
+                                                              'med_ecc', 'avg_ecc', 'e_density', 'clust_coeff', 
+                                                              'med_bet', 'avg_bet', 'med_closeness', 'avg_closeness', 
+                                                              'modu', 'defect_status'
+                    )
+    output_file <- paste0(dir2search, 'FINAL.GRAPH.METRIC.csv', sep='')
+    write.table(graph.metric.data, file=output_file, col.names = col_headers, sep = ",", row.names = F)
     print("================================================")
   }
 }
