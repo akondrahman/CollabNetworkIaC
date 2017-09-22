@@ -150,6 +150,7 @@ def dumpTempGraphForFile(all_nodes_param, all_edges_param, mon_param, ds_name_pa
     file2write = file_name_param.replace('/', '.')
     node_output_file = output_dir  + 'node' + file2write + '.csv'
     edge_output_file = output_dir  + 'edge' + file2write + '.csv'
+    print node_output_file
     bytes_ = dumpContentIntoFile(node_str_to_write, node_output_file)
     print 'Dumped a `NODE` file of {} bytes'.format(bytes_)
     bytes_ = dumpContentIntoFile(edge_str_to_write, edge_output_file)
