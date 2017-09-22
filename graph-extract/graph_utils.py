@@ -42,6 +42,16 @@ def getMonthFileCount(df_param):
     m_c_list       = _df_mon_cnt['FILE'].tolist()
     return m_list, m_c_list
 
+def getYearFileCount(df_param):
+    _df = pd.DataFrame(df_param, columns=['ID', 'REPO', 'FILE', 'TIME', 'DEFECTSTATUS'])
+    _df['YEAR']  = _df['TIME'].apply(getYear)
+    _df         = _df.sort(['YEAR'])
+    _df_year_cnt = _df.groupby(['YEAR'])[['FILE']].count()
+
+    y_list         = _df_year_cnt.index.get_level_values('YEAR').tolist()
+    y_c_list       = _df_year_cnt['FILE'].tolist()
+    return y_list, y_c_list
+
 def getAllMonthsFromDataset(categ_file_param):
        str2write = ''
        df_list = []
@@ -86,6 +96,49 @@ def getAllMonthsFromDataset(categ_file_param):
        m_list, m_c_list = getMonthFileCount(df_list)
        return m_list, month_file_dict, defect_file_dict, repo_file_dict
 
+def getAllYearsFromDataset(categ_file_param):
+       str2write = ''
+       df_list = []
+       '''
+       dicionary to hold files for each year
+       '''
+       year_file_dict, defect_file_dict, repo_file_dict = {}, {}, {}
+       with open(categ_file_param, 'rU') as f:
+         reader_ = csv.reader(f)
+         next(reader_, None)
+         for row in reader_:
+             id_       = row[0]
+             repo_     = row[1]
+             categ_    = row[3]
+             if categ_=='N':
+                 defect_status = '1'
+             else:
+                 defect_status = '0'
+             filepath_ = row[4]
+             time_ = getTimeInfo(id_, repo_)
+             time2write = time_.split(' ')[0]
+             df_list.append((id_, repo_, filepath_, time2write, defect_status))
+             '''
+             dictionary year
+             '''
+             y2write = getMonth(time2write)
+             if y2write not in month_file_dict:
+                 year_file_dict[y2write] = [filepath_]
+             else:
+                 year_file_dict[y2write] = month_file_dict[y2write] + [filepath_]
+             '''
+             dictionary files
+             '''
+             if filepath_ not in defect_file_dict:
+                 defect_file_dict[filepath_] = defect_status
+             '''
+             dictionary repos
+             '''
+             if filepath_ not in repo_file_dict:
+                 repo_file_dict[filepath_] = repo_
+       # get all years, and files in the year for the dataset
+       y_list, y_c_list = getYearFileCount(df_list)
+       return y_list, year_file_dict, defect_file_dict, repo_file_dict
 
 
 def getUniqueDevsForGit(param_file_path, repo_path):
