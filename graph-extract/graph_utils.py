@@ -105,9 +105,20 @@ def getUniqueDevs(param_file_path, repo_path):
 '''
 Graph construction zone
 '''
-def getEdges(uni_prog_names):
-    
+def getEdges(nodes_param):
+    edges_list_to_ret, temp_holder_nodes = [], []
+    if (len(nodes_param) > 1):
+       for each_node in nodes_param:
+           temp_holder_nodes.append(each_node)
+       for node_ in temp_holder_nodes:
+           temp_holder_nodes.remove(node_)
+           for other_node_index in xrange(len(temp_holder_nodes)):
+               other_node = temp_holder_nodes[other_node_index]
+               edges_list_to_ret.append((node_, other_node))
+
+    return edges_list_to_ret
 
 def constructGraph(prog_list_param):
     nodes = np.unique(prog_list_param)
     edges = getEdges(nodes)
+    return nodes, edges

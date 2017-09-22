@@ -22,5 +22,6 @@ if __name__=='__main__':
               repo_of_file  = repo_dict[each_file]
 
               prog_names=graph_utils.getUniqueDevs(each_file, repo_of_file)
-              print 'File:{}, repo:{}, defect:{}, programmers:{}'.format(each_file, repo_of_file, defect_status, prog_names)
+              nodes_, edges_ =graph_utils.constructGraph(prog_names)
+              print 'File:{}, repo:{}, defect:{}, nodes:{}, edges:{}'.format(each_file, repo_of_file, defect_status, nodes_, edges_)
               print '-'*100
