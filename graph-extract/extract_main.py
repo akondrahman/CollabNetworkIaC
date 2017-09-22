@@ -32,12 +32,12 @@ if __name__=='__main__':
                  node_file_name, edge_file_name =graph_utils.dumpTempGraphForFile(nodes_, edges_, mon_, 'WIKIMEDIA', each_file)
                  print 'File:{}, repo:{}, defect:{}, nodes:{}, edges:{}'.format(each_file, repo_of_file, defect_status, len(nodes_), len(edges_))
                  print '-'*100
-                 str2write = str2write + each_file + ',' + node_file_name + ',' + edge_file_name + ',' + '\n'
+                 str2write = str2write + each_file + ',' + node_file_name + ',' + edge_file_name + ',' + defect_status + ',' + '\n'
        output_dir = '/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/' + 'WIKIMEDIA' + '/' + mon_ + '/'
        if(os.path.exists(output_dir)==False):
           os.makedirs(output_dir)
        file_dump  = output_dir + 'temp.mapping.csv'
-       str2write  = 'FILE,NODE_FILE,EDGE_FILE,' + '\n' + str2write        
+       str2write  = 'FILE,NODE_FILE,EDGE_FILE,DEFECT_STATUS,' + '\n' + str2write
        byte_status=graph_utils.dumpContentIntoFile(str2write, file_dump)
        print 'Dumped the `temp mapping file` of {} bytes'.format(byte_status)
        print '='*100
