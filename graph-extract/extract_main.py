@@ -9,8 +9,12 @@ import graph_utils
 
 if __name__=='__main__':
    # dataset_file   = '/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Mozilla.Final.Categ.csv'
+
    # dataset_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Openstack.Final.Categ.csv'
-   dataset_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Wikimedia.Final.Categ.csv'
+   # ds_name = 'OPENSTACK'
+
+   # dataset_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Wikimedia.Final.Categ.csv'
+   # ds_name = 'WIKIMEDIA'
 
    # all_months_in_ds, file_per_mon_dict, file_defect_dict, repo_dict = graph_utils.getAllMonthsFromDataset(dataset_file)
    '''
@@ -38,11 +42,11 @@ if __name__=='__main__':
               prog_names=graph_utils.getUniqueDevsForGit(each_file, repo_of_file)
               nodes_, edges_ =graph_utils.constructGraph(prog_names)
               if (len(edges_) > 0):
-                 node_file_name, edge_file_name =graph_utils.dumpTempGraphForFile(nodes_, edges_, time_unit, 'WIKIMEDIA', each_file)
+                 node_file_name, edge_file_name =graph_utils.dumpTempGraphForFile(nodes_, edges_, time_unit, ds_name, each_file)
                  print 'File:{}, repo:{}, defect:{}, nodes:{}, edges:{}'.format(each_file, repo_of_file, defect_status, len(nodes_), len(edges_))
                  print '-'*100
                  str2write = str2write + each_file + ',' + node_file_name + ',' + edge_file_name + ',' + defect_status + ',' + '\n'
-       output_dir = '/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/' + 'WIKIMEDIA' + '/' + time_unit + '/'
+       output_dir = '/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/' + ds_name + '/' + time_unit + '/'
        if(os.path.exists(output_dir)==False):
           os.makedirs(output_dir)
        file_dump  = output_dir + 'temp.mapping.csv'
