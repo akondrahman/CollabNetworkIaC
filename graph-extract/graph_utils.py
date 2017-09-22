@@ -155,3 +155,5 @@ def dumpTempGraphForFile(all_nodes_param, all_edges_param, mon_param, ds_name_pa
     print 'Dumped a `NODE` file of {} bytes'.format(bytes_)
     bytes_ = dumpContentIntoFile(edge_str_to_write, edge_output_file)
     print 'Dumped a `EDGE` file of {} bytes'.format(bytes_)
+    #TODO return the file name for nodes and edges
+    return node_output_file, edge_output_file
