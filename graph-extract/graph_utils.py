@@ -88,7 +88,7 @@ def getAllMonthsFromDataset(categ_file_param):
 
 
 
-def getUniqueDevs(param_file_path, repo_path):
+def getUniqueDevsForGit(param_file_path, repo_path):
 
    cdCommand         = "cd " + repo_path + " ; "
    theFile           = os.path.relpath(param_file_path, repo_path)
@@ -101,6 +101,13 @@ def getUniqueDevs(param_file_path, repo_path):
    author_count_output = [x_ for x_ in author_count_output if x_!='']
 
    return author_count_output
+
+def dumpContentIntoFile(strP, fileP):
+    fileToWrite = open( fileP, 'w')
+    fileToWrite.write(strP)
+    fileToWrite.close()
+    return str(os.stat(fileP).st_size)
+
 
 '''
 Graph construction zone
@@ -121,4 +128,29 @@ def getEdges(nodes_param):
 def constructGraph(prog_list_param):
     nodes = np.unique(prog_list_param)
     edges = getEdges(nodes)
+    #TODO : Call python igraph
     return nodes, edges
+
+
+
+def dumpTempGraphForFile(all_nodes_param, all_edges_param, mon_param, ds_name_param, file_name_param):
+    node_str_to_write = ''
+    edge_str_to_write = ''
+    for node_index in xrange(len(all_nodes_param)):
+        node_str_to_write = node_str_to_write + all_nodes_param[node_index] + ',' +  '\n'
+    node_str_to_write = 'NODES' + ',' + '\n' + node_str_to_write
+    for edge_ in all_edges_param:
+        #print edge_
+        edge_str_to_write = edge_str_to_write + edge_[0] + ',' + edge_[1] + ',' + '\n'
+
+    edge_str_to_write = 'FROM' + ',' + 'TO' + ',' + '\n' + edge_str_to_write
+    output_dir = '/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/' + ds_name_param + '/' + mon_param + '/'
+    if(os.path.exists(output_dir)==False):
+       os.makedirs(output_dir)
+    file2write = file_name_param.replace('/', '.')
+    node_output_file = output_dir  + 'node' + file2write + '.csv'
+    edge_output_file = output_dir  + 'edge' + file2write + '.csv'
+    bytes_ = dumpContentIntoFile(node_str_to_write, node_output_file)
+    print 'Dumped a `NODE` file of {} bytes'.format(bytes_)
+    bytes_ = dumpContentIntoFile(edge_str_to_write, edge_output_file)
+    print 'Dumped a `EDGE` file of {} bytes'.format(bytes_)
