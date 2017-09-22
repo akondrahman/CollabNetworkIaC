@@ -155,6 +155,19 @@ def getUniqueDevsForGit(param_file_path, repo_path):
 
    return author_count_output
 
+def getUniqueDevsForHg(param_file_path, repo_path):
+
+   cdCommand         = "cd " + repo_path + " ; "
+   theFile           = os.path.relpath(param_file_path, repo_path)
+   commitCountCmd    = "hg churn --diffstat  " + theFile + " | awk '{print $1}'  "
+   command2Run = cdCommand + commitCountCmd
+
+   commit_count_output = subprocess.check_output(['bash','-c', command2Run])
+   author_count_output = commit_count_output.split('\n')
+   author_count_output = [x_ for x_ in author_count_output if x_!='']
+
+   return author_count_output
+
 def dumpContentIntoFile(strP, fileP):
     fileToWrite = open( fileP, 'w')
     fileToWrite.write(strP)
@@ -168,12 +181,6 @@ Graph construction zone
 def getEdges(nodes_param):
     edges_list_to_ret, temp_holder_nodes = [], []
     if (len(nodes_param) > 1):
-    #    for each_node in nodes_param:
-    #        temp_holder_nodes.append(each_node)
-    #    for node_ in temp_holder_nodes:
-    #        temp_holder_nodes.remove(node_)
-    #        for other_node in temp_holder_nodes:
-    #            edges_list_to_ret.append((node_, other_node))
        edges_list_to_ret = list(combinations(nodes_param, 2))
 
     return edges_list_to_ret

@@ -38,8 +38,11 @@ if __name__=='__main__':
               '''
               defect_status = file_defect_dict[each_file]
               repo_of_file  = repo_dict[each_file]
+              if('mozilla' in each_file):
+                 prog_names = graph_utils.getUniqueDevsForHg(each_file, repo_of_file)
+              else:
+                 prog_names = graph_utils.getUniqueDevsForGit(each_file, repo_of_file)
 
-              prog_names=graph_utils.getUniqueDevsForGit(each_file, repo_of_file)
               nodes_, edges_ =graph_utils.constructGraph(prog_names)
               if (len(edges_) > 0):
                  node_file_name, edge_file_name =graph_utils.dumpTempGraphForFile(nodes_, edges_, time_unit, ds_name, each_file)
