@@ -121,11 +121,11 @@ def getAllYearsFromDataset(categ_file_param):
              '''
              dictionary year
              '''
-             y2write = getMonth(time2write)
-             if y2write not in month_file_dict:
+             y2write = getYear(time2write)
+             if y2write not in year_file_dict:
                  year_file_dict[y2write] = [filepath_]
              else:
-                 year_file_dict[y2write] = month_file_dict[y2write] + [filepath_]
+                 year_file_dict[y2write] = year_file_dict[y2write] + [filepath_]
              '''
              dictionary files
              '''

@@ -52,6 +52,7 @@ for(dir2search in dirs2search)
     avg_close_vec <- c()              
     modularity_vec <- c()             
     
+    ##track which files ahve been processed ... 
     for(row_ind in 1:row_cnt)
     {
       file_name  <- all_file_names[row_ind]

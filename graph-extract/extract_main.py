@@ -11,18 +11,18 @@ if __name__=='__main__':
    # dataset_file   = '/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Mozilla.Final.Categ.csv'
    # dataset_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Openstack.Final.Categ.csv'
    dataset_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Wikimedia.Final.Categ.csv'
-   threshold    = 10
 
    # all_months_in_ds, file_per_mon_dict, file_defect_dict, repo_dict = graph_utils.getAllMonthsFromDataset(dataset_file)
    '''
    FOR MONTH
    '''
-   all_time_vals, file_per_time_dict, file_defect_dict, repo_dict = graph_utils.getAllMonthsFromDataset(dataset_file)
+   # threshold    = 10
+   # all_time_vals, file_per_time_dict, file_defect_dict, repo_dict = graph_utils.getAllMonthsFromDataset(dataset_file)
    '''
    FOR YEARS
    '''
+   threshold    = 50
    all_time_vals, file_per_time_dict, file_defect_dict, repo_dict = graph_utils.getAllYearsFromDataset(dataset_file)
-
 
    for time_unit, file_per_time in file_per_time_dict.iteritems():
        str2write = ''
