@@ -4,6 +4,7 @@ options(max.print=1000000)
 t1 <- Sys.time()
 
 dirs2search <- list.dirs('/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/WIKIMEDIA/', recursive=FALSE)
+the_name_  <- 'WIKIMEDIA'
 #print(dir2search)
 for(dir2search in dirs2search)
 {
@@ -21,8 +22,9 @@ for(dir2search in dirs2search)
     edge_file_names <- mapping_file_df$EDGE_FILE    
     defect_statuses <- mapping_file_df$DEFECT_STATUS
     ### INITIALIZATION OF VECTORS 
-    file_vec   <- c()
-    defect_vec <- c()
+    file_vec    <- c()
+    defect_vec  <- c()
+    ds_name_    <- c()
 
     node_cnt_vec <- c()
     edge_cnt_vec <- c()
@@ -79,6 +81,8 @@ for(dir2search in dirs2search)
         ### GET THE DEFECT STATUS AND FILE NAME
         file_vec    <- append(file_vec, file_name)
         defect_vec  <- append(defect_vec, defect_)
+        ds_name_    <- append(ds_name_, the_name_)
+        
         
         # # GET THE METRICS 
         edge_cnt     <- length(E(net))
@@ -151,26 +155,26 @@ for(dir2search in dirs2search)
     
     #### NOW APPEND !!! 
     print(dir2search)
-    graph.metric.data <- data.frame(file_vec, node_cnt_vec, edge_cnt_vec, 
+    graph.metric.data <- data.frame(ds_name_, file_vec, node_cnt_vec, edge_cnt_vec, 
                                               med_in_deg_vec, avg_in_deg_vec, 
                                               med_out_deg_vec, avg_out_deg_vec, 
                                               med_all_deg_vec, avg_all_deg_vec, 
-                                              assort_vec, dia_vec, 
+                                              dia_vec, 
                                               med_ecce_vec, avg_ecce_vec,
-                                              edge_dens_vec, clus_coeff_vec,
+                                              edge_dens_vec, 
                                               med_bet_vec, avg_bet_vec, 
                                               med_close_vec, avg_close_vec, modularity_vec, 
                                               defect_vec)
     print(head(graph.metric.data))
-    col_headers <- c( 'file_name', 'v_count', 'e_count', 'med_indeg', 'avg_indeg', 'med_outdeg', 'avg_outdeg', 
-                                                              'med_alldeg', 'avg_alldeg', 'assort', 'dia', 
-                                                              'med_ecc', 'avg_ecc', 'e_density', 'clust_coeff', 
+    col_headers <- c( 'repo_name', 'file_name', 'v_count', 'e_count', 'med_indeg', 'avg_indeg', 'med_outdeg', 'avg_outdeg', 
+                                                              'med_alldeg', 'avg_alldeg', 'dia', 
+                                                              'med_ecc', 'avg_ecc', 'e_density', 
                                                               'med_bet', 'avg_bet', 'med_closeness', 'avg_closeness', 
                                                               'modu', 'defect_status'
                     )
     colnames(graph.metric.data) <- col_headers
     output_file                 <- paste0(dir2search, 'FINAL.GRAPH.METRIC.csv', sep='')
-    write.table(graph.metric.data, file=output_file, col.names = T, sep = ",", row.names = F)
+    write.table(graph.metric.data, file=output_file, col.names = T, sep = ",", row.names = F, quote = FALSE)
     print("================================================")
   }
 }
