@@ -53,6 +53,8 @@ for(dir2search in dirs2search)
     modularity_vec <- c()             
     
     ##track which files ahve been processed ... 
+    file_tracker <- c()
+    
     for(row_ind in 1:row_cnt)
     {
       file_name  <- all_file_names[row_ind]
@@ -60,100 +62,92 @@ for(dir2search in dirs2search)
       edge_file  <- edge_file_names[row_ind]   
       defect_    <- defect_statuses[row_ind]
 
-      #construct the network        
-      nodes <- read.csv(node_file, header=T, as.is=T)
-      edges <- read.csv(edge_file, header=T, as.is=T)      
-      net <- graph_from_data_frame(d=edges, vertices=nodes, directed=F) 
-      
-      ### GET THE DEFECT STATUS AND FILE NAME
-      file_vec    <- append(file_vec, file_name)
-      defect_vec  <- append(defect_vec, defect_)
-
-      # # GET THE METRICS 
-      edge_cnt     <- length(E(net))
-      node_cnt     <- length(V(net)) 
-      node_cnt_vec <- append(node_cnt_vec, node_cnt)
-      edge_cnt_vec <- append(edge_cnt_vec, edge_cnt)
-      
-      in_degree_  <- degree(net, mode="in")
-      med_in_deg  <- median(in_degree_)
-      avg_in_deg  <- mean(in_degree_)
-      
-      med_in_deg_vec <- append(med_in_deg_vec, med_in_deg)
-      avg_in_deg_vec <- append(avg_in_deg_vec, avg_in_deg)      
-
-      out_degree_  <- degree(net, mode="out")
-      med_out_deg  <- median(out_degree_)
-      avg_out_deg  <- mean(out_degree_)
-
-      med_out_deg_vec <- append(med_out_deg_vec, med_out_deg)
-      avg_out_deg_vec <- append(avg_out_deg_vec, avg_out_deg)            
-      
-      all_degree_  <- degree(net, mode="all")
-      med_all_deg  <- median(all_degree_)
-      avg_all_deg  <- mean(all_degree_)      
-
-      med_all_deg_vec <- append(med_all_deg_vec, med_all_deg)
-      avg_all_deg_vec <- append(avg_all_deg_vec, avg_all_deg)                  
-      
-      assort_val_  <- assortativity_degree(net)
-      diam_val_    <- diameter(net, directed=F)
-      
-      assort_vec <- append(assort_vec, assort_val_)
-      dia_vec    <- append(dia_vec, diam_val_)                  
-      
-      eceentric_   <- eccentricity(net)
-      med_ecentric <- median(eceentric_)
-      avg_ecentric <- mean(eceentric_)
-      
-      med_ecce_vec <- append(med_ecce_vec, med_ecentric)
-      avg_ecce_vec <- append(avg_ecce_vec, avg_ecentric)                      
-
-      edg_dens     <- edge_density(net, loops=T)
-      clust_coeff  <- transitivity(net)
-
-      
-      edge_dens_vec  <- append(edge_dens_vec, edg_dens)
-      clus_coeff_vec <- append(clus_coeff_vec, clust_coeff)                      
-
-      edge_betw    <- edge.betweenness(net, e=E(net))
-      med_e_bet    <- median(edge_betw)
-      avg_e_bet    <- mean(edge_betw)
-
-      med_bet_vec  <- append(med_bet_vec, med_e_bet)       
-      avg_bet_vec  <- append(avg_bet_vec, avg_e_bet)       
-
-      
-      closeness   <- closeness(net, vids=V(net))
-      avg_close   <- mean(closeness)
-      med_close   <- median(closeness)
-      
-      med_close_vec <- append(med_close_vec, med_close)
-      avg_close_vec <- append(avg_close_vec, avg_close)              
-
-      clust_edge_bet <- cluster_edge_betweenness(net) # first create clsuters using Newman's algorithm 
-      modula_        <- modularity(clust_edge_bet)    # now calculate modularity 
-      modularity_vec <- append(modularity_vec, modula_)    
-      
+      if(file_name %in% file_tracker)
+      {
+          print('Already processed ... skipping ...')
+      }
+      else
+      {
+        ## add current file to tracker 
+        file_tracker <- append(file_tracker, file_name)        
+        
+        #construct the network        
+        nodes <- read.csv(node_file, header=T, as.is=T)
+        edges <- read.csv(edge_file, header=T, as.is=T)      
+        net <- graph_from_data_frame(d=edges, vertices=nodes, directed=F) 
+        
+        ### GET THE DEFECT STATUS AND FILE NAME
+        file_vec    <- append(file_vec, file_name)
+        defect_vec  <- append(defect_vec, defect_)
+        
+        # # GET THE METRICS 
+        edge_cnt     <- length(E(net))
+        node_cnt     <- length(V(net)) 
+        node_cnt_vec <- append(node_cnt_vec, node_cnt)
+        edge_cnt_vec <- append(edge_cnt_vec, edge_cnt)
+        
+        in_degree_  <- degree(net, mode="in")
+        med_in_deg  <- median(in_degree_)
+        avg_in_deg  <- mean(in_degree_)
+        
+        med_in_deg_vec <- append(med_in_deg_vec, med_in_deg)
+        avg_in_deg_vec <- append(avg_in_deg_vec, avg_in_deg)      
+        
+        out_degree_  <- degree(net, mode="out")
+        med_out_deg  <- median(out_degree_)
+        avg_out_deg  <- mean(out_degree_)
+        
+        med_out_deg_vec <- append(med_out_deg_vec, med_out_deg)
+        avg_out_deg_vec <- append(avg_out_deg_vec, avg_out_deg)            
+        
+        all_degree_  <- degree(net, mode="all")
+        med_all_deg  <- median(all_degree_)
+        avg_all_deg  <- mean(all_degree_)      
+        
+        med_all_deg_vec <- append(med_all_deg_vec, med_all_deg)
+        avg_all_deg_vec <- append(avg_all_deg_vec, avg_all_deg)                  
+        
+        assort_val_  <- assortativity_degree(net)
+        diam_val_    <- diameter(net, directed=F)
+        
+        assort_vec <- append(assort_vec, assort_val_)
+        dia_vec    <- append(dia_vec, diam_val_)                  
+        
+        eceentric_   <- eccentricity(net)
+        med_ecentric <- median(eceentric_)
+        avg_ecentric <- mean(eceentric_)
+        
+        med_ecce_vec <- append(med_ecce_vec, med_ecentric)
+        avg_ecce_vec <- append(avg_ecce_vec, avg_ecentric)                      
+        
+        edg_dens     <- edge_density(net, loops=T)
+        clust_coeff  <- transitivity(net)
+        
+        
+        edge_dens_vec  <- append(edge_dens_vec, edg_dens)
+        clus_coeff_vec <- append(clus_coeff_vec, clust_coeff)                      
+        
+        edge_betw    <- edge.betweenness(net, e=E(net))
+        med_e_bet    <- median(edge_betw)
+        avg_e_bet    <- mean(edge_betw)
+        
+        med_bet_vec  <- append(med_bet_vec, med_e_bet)       
+        avg_bet_vec  <- append(avg_bet_vec, avg_e_bet)       
+        
+        
+        closeness   <- closeness(net, vids=V(net))
+        avg_close   <- mean(closeness)
+        med_close   <- median(closeness)
+        
+        med_close_vec <- append(med_close_vec, med_close)
+        avg_close_vec <- append(avg_close_vec, avg_close)              
+        
+        clust_edge_bet <- cluster_edge_betweenness(net) # first create clsuters using Newman's algorithm 
+        modula_        <- modularity(clust_edge_bet)    # now calculate modularity 
+        modularity_vec <- append(modularity_vec, modula_)            
+        
+      }
     }
-#     print(length(file_vec))
-#     print(length(med_in_deg_vec))
-#     print(length(avg_in_deg_vec))
-#     print(length(med_out_deg_vec))
-#     print(length(avg_out_deg_vec))    
-#     print(length(med_all_deg_vec))
-#     print(length(avg_all_deg_vec))    
-#     print(length(assort_vec))
-#     print(length(dia_vec))
-#     print(length(avg_ecce_vec))
-#     print(length(edge_dens_vec))
-#     print(length(clus_coeff_vec))    
-#     print(length(med_bet_vec))
-#     print(length(avg_bet_vec))
-#     print(length(med_close_vec))    
-#     print(length(avg_close_vec))    
-#     print(length(modularity_vec))
-#     print(length(defect_vec))    
     
     #### NOW APPEND !!! 
     print(dir2search)
