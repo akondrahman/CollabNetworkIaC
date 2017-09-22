@@ -61,8 +61,25 @@ for(dir2search in dirs2search)
       print("Page rank")
       page_rank(net)$vector
       print("Edge density")
-      edge_density(net, loops=T)
-      
+      print(edge_density(net, loops=T))
+      print("Transitivity")
+      print(transitivity(net))
+      # gives the clustering coefficient of the whole network            
+      # Betweenness is the number of shortest paths between two nodes that go through each node of interest
+      print("Betweenness")
+      #print(betweenness(net, v=V(net)))
+      print(edge.betweenness(net, e=E(net)))
+      # Closeness refers to how connected a node is to its neighbors
+      print("Closeness")
+      print(closeness(net, vids=V(net)))
+      #print("Eigen centraility")
+      #print(eigen_centrality(net))
+      print("Closeness centraility")
+      print(median(closeness(net)))
+      print("Modularity")
+      clust_edge_bet <- cluster_edge_betweenness(net)
+      #wtc <- cluster_walktrap(net)
+      print(modularity(clust_edge_bet))
       print("================================================")
     }   
   }
@@ -75,7 +92,8 @@ t2 <- Sys.time()
 print(t2 - t1)  
 rm(list = setdiff(ls(), lsf.str()))
 
-
+# transitivity(test.graph,type="local")
+# # gives the clustering coefficient of each node
 
 
 
