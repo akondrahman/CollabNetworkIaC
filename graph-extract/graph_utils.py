@@ -6,7 +6,7 @@ Akond Rahman
 import os, csv, numpy as np
 import pandas as pd
 import subprocess
-
+from itertools import combinations
 def getYear(single_date):
     dt2ret = single_date.split('-')[0]
     return dt2ret
@@ -115,20 +115,19 @@ Graph construction zone
 def getEdges(nodes_param):
     edges_list_to_ret, temp_holder_nodes = [], []
     if (len(nodes_param) > 1):
-       for each_node in nodes_param:
-           temp_holder_nodes.append(each_node)
-       for node_ in temp_holder_nodes:
-           temp_holder_nodes.remove(node_)
-           for other_node_index in xrange(len(temp_holder_nodes)):
-               other_node = temp_holder_nodes[other_node_index]
-               edges_list_to_ret.append((node_, other_node))
+    #    for each_node in nodes_param:
+    #        temp_holder_nodes.append(each_node)
+    #    for node_ in temp_holder_nodes:
+    #        temp_holder_nodes.remove(node_)
+    #        for other_node in temp_holder_nodes:
+    #            edges_list_to_ret.append((node_, other_node))
+       edges_list_to_ret = list(combinations(nodes_param, 2))
 
     return edges_list_to_ret
 
 def constructGraph(prog_list_param):
     nodes = np.unique(prog_list_param)
     edges = getEdges(nodes)
-    #TODO : Call python igraph
     return nodes, edges
 
 
