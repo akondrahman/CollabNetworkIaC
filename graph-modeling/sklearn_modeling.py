@@ -121,10 +121,8 @@ def performIterativeModeling(training_set_param, test_set_param, training_labels
   fscore_cart_holder, fscore_logi_holder, fscore_nb_holder, fscore_rf_holder, fscore_svc_holder = [], [], [], [], []
   for ind_ in xrange(iterationP):
     ## iterative modeling for CART
-    cart_area_roc      = performCART(training_set_param, test_set_param, training_labels_param, actual_labels_param, "CART")[0]
-    cart_prec_         = performCART(training_set_param, test_set_param, training_labels_param, actual_labels_param, "CART")[1]
-    cart_recall_       = performCART(training_set_param, test_set_param, training_labels_param, actual_labels_param, "CART")[2]
-    cart_fmeasu_       = performCART(training_set_param, test_set_param, training_labels_param, actual_labels_param, "CART")[3]
+    cart_area_roc, cart_prec_, cart_recall_, cart_fmeasu_        = performCART(training_set_param, test_set_param, training_labels_param, actual_labels_param, "CART")
+
     holder_cart.append(cart_area_roc)
     cart_prec_holder.append(cart_prec_)
     cart_recall_holder.append(cart_recall_)
@@ -135,10 +133,8 @@ def performIterativeModeling(training_set_param, test_set_param, training_labels
     cart_fmeasu_  = float(0)
 
     ## iterative modeling for RF
-    rf_area_roc = performRF(training_set_param, test_set_param, training_labels_param, actual_labels_param, "Rand. Forest")[0]
-    rf_prec_    = performRF(training_set_param, test_set_param, training_labels_param, actual_labels_param, "Rand. Forest")[1]
-    rf_recall_  = performRF(training_set_param, test_set_param, training_labels_param, actual_labels_param, "Rand. Forest")[2]
-    rf_fmeasu_  = performRF(training_set_param, test_set_param, training_labels_param, actual_labels_param, "Rand. Forest")[2]
+    rf_area_roc, rf_prec_, rf_recall_, rf_fmeasu_ = performRF(training_set_param, test_set_param, training_labels_param, actual_labels_param, "Rand. Forest")
+
     holder_rf.append(rf_area_roc)
     rf_prec_holder.append(rf_prec_)
     rf_recall_holder.append(rf_recall_)
@@ -149,10 +145,8 @@ def performIterativeModeling(training_set_param, test_set_param, training_labels
     rf_fmeasu_  = float(0)
 
     ## iterative modeling for SVC
-    svc_area_roc = performSVC(training_set_param, test_set_param, training_labels_param, actual_labels_param, "Supp. Vector Classi.")[0]
-    svc_prec_    = performSVC(training_set_param, test_set_param, training_labels_param, actual_labels_param, "Supp. Vector Classi.")[1]
-    svc_recall_  = performSVC(training_set_param, test_set_param, training_labels_param, actual_labels_param, "Supp. Vector Classi.")[2]
-    svc_fscore_  = performSVC(training_set_param, test_set_param, training_labels_param, actual_labels_param, "Supp. Vector Classi.")[3]
+    svc_area_roc, svc_prec_, svc_recall_, svc_fscore_   = performSVC(training_set_param, test_set_param, training_labels_param, actual_labels_param, "Supp. Vector Classi.")
+
     holder_svc.append(svc_area_roc)
     svc_prec_holder.append(svc_prec_)
     svc_recall_holder.append(svc_recall_)
@@ -163,10 +157,8 @@ def performIterativeModeling(training_set_param, test_set_param, training_labels
     svc_fscore_  = float(0)
 
     ## iterative modeling for logistic regression
-    logi_reg_area_roc = performLogiReg(training_set_param, test_set_param, training_labels_param, actual_labels_param, "Logi. Regression Classi.")[0]
-    logi_reg_preci_   = performLogiReg(training_set_param, test_set_param, training_labels_param, actual_labels_param, "Logi. Regression Classi.")[1]
-    logi_reg_recall   = performLogiReg(training_set_param, test_set_param, training_labels_param, actual_labels_param, "Logi. Regression Classi.")[2]
-    logi_reg_fmeasu   = performLogiReg(training_set_param, test_set_param, training_labels_param, actual_labels_param, "Logi. Regression Classi.")[3]
+    logi_reg_area_roc, logi_reg_preci_, logi_reg_recall, logi_reg_fmeasu = performLogiReg(training_set_param, test_set_param, training_labels_param, actual_labels_param, "Logi. Regression Classi.")
+
     holder_logi.append(logi_reg_area_roc)
     logi_prec_holder.append(logi_reg_preci_)
     logi_recall_holder.append(logi_reg_recall)
