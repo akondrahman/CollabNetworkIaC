@@ -10,22 +10,6 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn import linear_model
 import utility
 
-def dumpPredPerfValuesToFile(iterations, predPerfVector, fileName):
-   str2write=''
-   headerStr='AUC,PRECISION,RECALL,FMEASURE,'
-   for cnt in xrange(iterations):
-     auc_   = predPerfVector[0][cnt]
-     prec_  = predPerfVector[1][cnt]
-     recal  = predPerfVector[2][cnt]
-     fmeas  = predPerfVector[3][cnt]
-     str2write = str2write + str(auc_) + ',' + str(prec_) + ',' + str(recal) + ',' + str(fmeas) + ',' + '\n'
-   str2write = headerStr + '\n' + str2write
-   bytes_ = Utility.dumpContentIntoFile(str2write, fileName)
-   print "Created {} of {} bytes".format(fileName, bytes_)
-
-
-
-
 def evalClassifier(actualLabels, predictedLabels):
   '''
     the way skelarn treats is the following: first index -> lower index -> 0 -> 'Low'
@@ -68,103 +52,49 @@ def evalClassifier(actualLabels, predictedLabels):
   # preserve the order first test(real values from dataset), then predcited (from the classifier )
   #print "Area under the ROC curve is ", area_roc_output
   #print">"*10
-  f_measure_output = f1_score(actualLabels, predictedLabels, average='binary')
-  '''
-    mean absolute error (mae) values .... reff: http://scikit-learn.org/stable/modules/generated/sklearn.metrics.mean_absolute_error.html
-    the smaller the better , ideally expect 0.0
-  '''
-  #mae_output = mean_absolute_error(actualLabels, predictedLabels)
-  # preserve the order first test(real values from dataset), then predcited (from the classifier )
-  #print "Mean absolute errro output  is ", mae_output
-  #print">"*25
-  '''
-  accuracy_score ... reff: http://scikit-learn.org/stable/modules/model_evaluation.html#scoring-parameter .... percentage of correct predictions
-  ideally 1.0, higher the better
-  '''
-  #accuracy_score_output = accuracy_score(actualLabels, predictedLabels)
-  # preserve the order first test(real values from dataset), then predcited (from the classifier )
-  #print "Accuracy output  is ", accuracy_score_output
-  #print">"*10
   '''
     this function returns area under the curve , which will be used
     for D.E. and repated measurements
   '''
+  # Fu's fedback
+  f_measure_output = f1_score(actualLabels, predictedLabels, average='binary')
   return area_roc_output, prec_, recall_, f_measure_output
 
 
-def perform_cross_validation(classiferP, featuresP, labelsP, cross_vali_param, infoP):
-  predicted_labels = cross_validation.cross_val_predict(classiferP, featuresP , labelsP, cv=cross_vali_param)
-  area_roc_to_ret = evalClassifier(labelsP, predicted_labels)
-  return area_roc_to_ret
 
-
-
-
-def performCART(featureParam, labelParam, foldParam, infoP):
-  theCARTModel = DecisionTreeClassifier()
-
-  cart_area_under_roc = perform_cross_validation(theCARTModel, featureParam, labelParam, foldParam, infoP)
-  print "For {}, area under ROC is: {}".format(infoP, cart_area_under_roc[0])
-  return cart_area_under_roc
-
-
-
-def performRF(featureParam, labelParam, foldParam, infoP):
+def performRF(training_set_param, test_set_param, training_labels_param, actual_labels_param, infoP):
   theRndForestModel = RandomForestClassifier()
-
-  rf_area_under_roc = perform_cross_validation(theRndForestModel, featureParam, labelParam, foldParam, infoP)
-  print "For {} area under ROC is: {}".format(infoP, rf_area_under_roc[0])
+  theRndForestModel.fit(training_set_param, training_labels_param)
+  the_predicted_labels = theRndForestModel.predict(test_set_param)
+  rf_area_under_roc = evalClassifier(actual_labels_param, the_predicted_labels)
+  print "(CROSS-ORG): For {} area under ROC is: {}".format(infoP, rf_area_under_roc[0])
   return rf_area_under_roc
 
-def performSVC(featureParam, labelParam, foldParam, infoP):
-  theSVMModel = svm.SVC(kernel='rbf').fit(featureParam, labelParam)
 
-  svc_area_under_roc = perform_cross_validation(theSVMModel, featureParam, labelParam, foldParam, infoP)
+
+def performCART(training_set_param, test_set_param, training_labels_param, actual_labels_param, infoP):
+  theCartModel = DecisionTreeClassifier()
+  theCartModel.fit(training_set_param, training_labels_param)
+  the_predicted_labels = theCartModel.predict(test_set_param)
+  cart_area_under_roc = evalClassifier(actual_labels_param, the_predicted_labels)
+  print "(CROSS-ORG): For {} area under ROC is: {}".format(infoP, cart_area_under_roc[0])
+  return cart_area_under_roc
+
+def performSVC(training_set_param, test_set_param, training_labels_param, actual_labels_param, infoP):
+  theSVMModel = svm.SVC(kernel='rbf').fit(training_set_param, training_labels_param)
+  the_predicted_labels = theSVMModel.predict(test_set_param)
+  svc_area_under_roc = evalClassifier(actual_labels_param, the_predicted_labels)
   print "For {} area under ROC is: {}".format(infoP, svc_area_under_roc[0])
   return svc_area_under_roc
 
 
-def performLogiReg(featureParam, labelParam, foldParam, infoP):
+def performLogiReg(training_set_param, test_set_param, training_labels_param, actual_labels_param, infoP):
   theLogisticModel = LogisticRegression()
-
-  theLogisticModel.fit(featureParam, labelParam)
-  logireg_area_under_roc = perform_cross_validation(theLogisticModel, featureParam, labelParam, foldParam, infoP)
+  theLogisticModel.fit(training_set_param, training_labels_param)
+  the_predicted_labels = theLogisticModel.predict(test_set_param)
+  logireg_area_under_roc = evalClassifier(actual_labels_param, the_predicted_labels)
   print "For {} area under ROC is: {}".format(infoP, logireg_area_under_roc[0])
   return logireg_area_under_roc
-
-
-
-def performNaiveBayes(featureParam, labelParam, foldParam, infoP):
-  theNBModel = GaussianNB()
-  #######theNBModel = MultinomialNB() : not used : throws weird error
-  #theNBModel = BernoulliNB()
-  '''
-  with optimized parameters
-  first is mozilla then wiki
-  '''
-  theNBModel.fit(featureParam, labelParam)
-  gnb_area_under_roc = perform_cross_validation(theNBModel, featureParam, labelParam, foldParam, infoP)
-  print "For {} area under ROC is: {}".format(infoP, gnb_area_under_roc[0])
-  return gnb_area_under_roc
-
-
-def performModeling(features, labels, foldsParam):
-  #r_, c_ = np.shape(features)
-  ### lets do CART (decision tree)
-  performCART(features, labels, foldsParam, "CART")
-  print "="*100
-  ### lets do RF (ensemble method: random forest)
-  performRF(features, labels, foldsParam, "RF")
-  print "="*100
-  ### lets do SVC (support vector: support-vector classification)
-  performSVC(features, labels, foldsParam, "SVC")
-  print "="*100
-  ### lets do Logistic regession
-  performLogiReg(features, labels, foldsParam, "LogiRegr")
-  print "="*100
-  ### lets do naive bayes
-  performNaiveBayes(features, labels, foldsParam, "Naive-Bayes")
-  print "="*100
 
 
 def dumpPredPerfValuesToFile(iterations, predPerfVector, fileName):
