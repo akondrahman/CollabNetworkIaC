@@ -33,14 +33,14 @@ def getDatasetFromCSV(fileParam, dataTypeFlag=True):
 
 
 def getFeaturesAndLabels(file_name_param):
-       dataset = getDatasetFromCSV(file_name_param)
-       full_rows, full_cols = np.shape(dataset)
+       training_dataset = getDatasetFromCSV(file_name_param)
+       full_rows, full_cols = np.shape(training_dataset)
        feature_cols = full_cols - 1  ## the last column is defect status, so one column to skip
        training_features = training_dataset[:, 2:feature_cols]
        '''
        lets transform all the features via log transformation
        '''
-       log_transformed_train_features = utility.createLogTransformedFeatures(training_features)
+       log_transformed_train_features = createLogTransformedFeatures(training_features)
        '''
        get labels
        '''

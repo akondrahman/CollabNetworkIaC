@@ -51,6 +51,8 @@ def constructCombos(ds_param):
 
 if __name__=='__main__':
    ds_dir   = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/MOZILLA/"
+   folder_to_save = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/output/MOZILLA"
+
    # ds_dir = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/OPENSTACK/"
    # ds_dir = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/WIKIMEDIA/"
 
@@ -62,5 +64,13 @@ if __name__=='__main__':
        '''
        training dataset zone
        '''
-       log_features, labels = utility.getFeaturesAndLabels(train_file)
+       train_log_features, train_labels = utility.getFeaturesAndLabels(train_file)
+       '''
+       test dataset zone
+       '''
+       test_log_features, test_labels = utility.getFeaturesAndLabels(test_file)
+       '''
+       do prediction: 10 times iteration
+       '''
+       #sklearn_models.performIterativeModeling(train_log_features, test_log_features, train_labels, test_labels, folder_to_save, 10)
        print '='*100
