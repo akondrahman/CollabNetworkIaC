@@ -3,8 +3,8 @@ library('igraph')
 options(max.print=1000000)
 t1 <- Sys.time()
 
-dirs2search <- list.dirs('/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/MOZILLA/', recursive=FALSE)
-the_name_  <- 'MOZILLA'
+# dirs2search <- list.dirs('/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/MOZILLA/', recursive=FALSE)
+# the_name_  <- 'MOZILLA'
 
 # dirs2search <- list.dirs('/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/OPENSTACK/', recursive=FALSE)
 # the_name_  <- 'OPENSTACK'
@@ -167,31 +167,39 @@ for(dir2search in dirs2search)
     
     #### NOW APPEND !!! 
     print(dir2search)
+#     graph.metric.data <- data.frame(ds_name_, file_vec, node_cnt_vec, edge_cnt_vec, 
+#                                               med_in_deg_vec, avg_in_deg_vec, 
+#                                               med_out_deg_vec, avg_out_deg_vec, 
+#                                               med_all_deg_vec, avg_all_deg_vec, 
+#                                               dia_vec, 
+#                                               med_ecce_vec, avg_ecce_vec,
+#                                               edge_dens_vec, 
+#                                               med_bet_vec, avg_bet_vec, 
+#                                               med_close_vec, avg_close_vec, modularity_vec, 
+#                                               defect_vec)
+
     graph.metric.data <- data.frame(ds_name_, file_vec, node_cnt_vec, edge_cnt_vec, 
-                                              med_in_deg_vec, avg_in_deg_vec, 
-                                              med_out_deg_vec, avg_out_deg_vec, 
-                                              med_all_deg_vec, avg_all_deg_vec, 
-                                              dia_vec, 
-                                              med_ecce_vec, avg_ecce_vec,
-                                              edge_dens_vec, 
-                                              med_bet_vec, avg_bet_vec, 
-                                              med_close_vec, avg_close_vec, modularity_vec, 
-                                              defect_vec)
+                                med_all_deg_vec,  
+                                edge_dens_vec, 
+                                med_close_vec, 
+                                defect_vec)
+
     print(head(graph.metric.data))
-    col_headers <- c( 'repo_name', 'file_name', 'v_count', 'e_count', 'med_indeg', 'avg_indeg', 'med_outdeg', 'avg_outdeg', 
-                                                              'med_alldeg', 'avg_alldeg', 'dia', 
-                                                              'med_ecc', 'avg_ecc', 'e_density', 
-                                                              'med_bet', 'avg_bet', 'med_closeness', 'avg_closeness', 
-                                                              'modu', 'defect_status'
-                    )
+#     col_headers <- c( 'repo_name', 'file_name', 'v_count', 'e_count', 'med_indeg', 'avg_indeg', 'med_outdeg', 'avg_outdeg', 
+#                                                               'med_alldeg', 'avg_alldeg', 'dia', 
+#                                                               'med_ecc', 'avg_ecc', 'e_density', 
+#                                                               'med_bet', 'avg_bet', 'med_closeness', 'avg_closeness', 
+#                                                               'modu', 'defect_status'
+#                     )
+    col_headers <- c( 'repo_name', 'file_name', 'v_count', 'e_count', 'med_alldeg', 'e_density', 
+                      'med_closeness', 'defect_status'
+    )
     colnames(graph.metric.data) <- col_headers
     output_file                 <- paste0(dir2search, 'FINAL.GRAPH.METRIC.csv', sep='')
     write.table(graph.metric.data, file=output_file, col.names = T, sep = ",", row.names = F, quote = FALSE)
     print("================================================")
   }
 }
-
-
 
 
 t2 <- Sys.time()
