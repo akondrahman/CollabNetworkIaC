@@ -20,7 +20,9 @@ for dataset_dir in dataset_dirs:
            file2look = dir2look + 'FINAL.GRAPH.METRIC.csv'
            if(os.path.exists(file2look)):
                 df2read = pd.read_csv(file2look)
-                print df2read.head()
+                print 'Analyzing:', file2look
+                print '='*100
+                # print df2read.head()
                 features = df2read.columns
                 for feature_ in features:
                     if ((feature_!='repo_name') and (feature_!='file_name') and (feature_!='defect_status')):
@@ -32,13 +34,7 @@ for dataset_dir in dataset_dirs:
                        summary time
                        '''
                        print "Defective values stats: \n", defective_vals_for_feature.describe()
-                       d_perc_90 = np.percentile(defective_vals_for_feature, 90)
-                       print "90th percentile", d_perc_90
-                       print '-'*25
                        print "Non defective values stats: \n", non_defective_vals_for_feature.describe()
-                       nd_perc_90 = np.percentile(non_defective_vals_for_feature, 90)
-                       print "90th percentile", nd_perc_90
-                       print '-'*25
                        TS, p = stats.mannwhitneyu(list(defective_vals_for_feature), list(non_defective_vals_for_feature), alternative='greater')
                        cliffs_delta = cliffsDelta.cliffsDelta(list(defective_vals_for_feature), list(non_defective_vals_for_feature))
                        print 'pee value:{}, cliffs:{}'.format( p, cliffs_delta)
