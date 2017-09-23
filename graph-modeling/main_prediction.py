@@ -34,8 +34,8 @@ def constructCombos(ds_param):
         for dir_ in os.listdir(ds_param):
             if (dir_!='.DS_Store'):
                dir2look = ds_param + dir_ + '/'
-               file2look = dir2look + 'FINAL.GRAPH.METRIC.csv'
-               #file2look = dir2look + 'BFS.FINAL.GRAPH.METRIC.csv'
+               #file2look = dir2look + 'FINAL.GRAPH.METRIC.csv'
+               file2look = dir2look + 'BFS.FINAL.GRAPH.METRIC.csv'
                if(os.path.exists(file2look)):
                  ds_lists.append(file2look)
         ds_lists =  list(combinations(ds_lists, 2))
@@ -51,11 +51,14 @@ def constructCombos(ds_param):
 
 
 if __name__=='__main__':
-   ds_dir   = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/MOZILLA/"
-   folder_to_save = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/output/MOZILLA_BFS_TIME_PRED_RES/"
+   # ds_dir   = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/MOZILLA/"
+   # folder_to_save = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/output/MOZILLA_BFS_TIME_PRED_RES/"
+   #
+   # ds_dir   = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/OPENSTACK/"
+   # folder_to_save = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/output/OPENSTACK_BFS_TIME_PRED_RES/"
 
-   # ds_dir = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/OPENSTACK/"
-   # ds_dir = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/WIKIMEDIA/"
+   # ds_dir   = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/WIKIMEDIA/"
+   # folder_to_save = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/output/WIKIMEDIA_BFS_TIME_PRED_RES/"
 
    train_test_combos = constructCombos(ds_dir)
    #print train_test_combos
