@@ -6,7 +6,7 @@ Saturday
 '''
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn import decomposition
-import process_metric_utility , numpy as np , pandas as pd
+import numpy as np , pandas as pd, os
 from itertools import combinations
 glimpseIndex=10
 
@@ -29,13 +29,24 @@ def getPCAInsights(pcaParamObj, no_of_pca_comp_to_see):
     print "+"*25
 
 def constructCombos(ds_param):
-        ds_lists = []
+        ds_lists, output_list  = [], []
         for dir_ in os.listdir(ds_param):
             if (dir_!='.DS_Store'):
-               dir2look = dataset_dir + dir_ + '/'
+               dir2look = ds_param + dir_ + '/'
                file2look = dir2look + 'FINAL.GRAPH.METRIC.csv'
-               ds_lists.append(file2look)
-        return list(combinations(ds_lists))
+               if(os.path.exists(file2look)):
+                 ds_lists.append(file2look)
+        ds_lists =  list(combinations(ds_lists, 2))
+        for combo in ds_lists:
+            train_file, test_file = combo
+            train_path, test_path = os.path.dirname(train_file), os.path.dirname(test_file)
+            train_year_value, test_year_value =  int(train_path.split('/')[-1]), int(test_path.split('/')[-1])
+            #print train_year_value, test_year_value
+            if((test_year_value > train_year_value) and ((test_year_value - train_year_value)==1)):
+                output_list.append(combo)
+        return output_list
+
+
 
 if __name__=='__main__':
    ds_dir   = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/MOZILLA/"
