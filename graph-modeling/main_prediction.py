@@ -8,7 +8,7 @@ from sklearn.ensemble import ExtraTreesClassifier
 from sklearn import decomposition
 import numpy as np , pandas as pd, os
 from itertools import combinations
-import utility
+import utility, sklearn_modeling
 glimpseIndex=10
 
 def getPCAInsights(pcaParamObj, no_of_pca_comp_to_see):
@@ -72,5 +72,5 @@ if __name__=='__main__':
        '''
        do prediction: 10 times iteration
        '''
-       #sklearn_models.performIterativeModeling(train_log_features, test_log_features, train_labels, test_labels, folder_to_save, 10)
+       #sklearn_modeling.performIterativeModeling(train_log_features, test_log_features, train_labels, test_labels, folder_to_save, 10)
        print '='*100
