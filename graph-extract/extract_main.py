@@ -9,6 +9,7 @@ import graph_utils
 
 if __name__=='__main__':
    # dataset_file   = '/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Mozilla.Final.Categ.csv'
+   # ds_name = 'MOZILLA'
 
    # dataset_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Openstack.Final.Categ.csv'
    # ds_name = 'OPENSTACK'
@@ -30,7 +31,6 @@ if __name__=='__main__':
 
    for time_unit, file_per_time in file_per_time_dict.iteritems():
        str2write = ''
-       #print 'Month:{}, file:{}'.format(mon_, len(file_per_time))
        if (len(file_per_time)>= threshold):
           for each_file in file_per_time:
               '''
@@ -42,7 +42,9 @@ if __name__=='__main__':
                  prog_names = graph_utils.getUniqueDevsForHg(each_file, repo_of_file)
               else:
                  prog_names = graph_utils.getUniqueDevsForGit(each_file, repo_of_file)
-
+              '''
+              call method to construct graphs
+              '''
               nodes_, edges_ =graph_utils.constructGraph(prog_names)
               if (len(edges_) > 0):
                  node_file_name, edge_file_name =graph_utils.dumpTempGraphForFile(nodes_, edges_, time_unit, ds_name, each_file)
