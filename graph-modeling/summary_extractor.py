@@ -35,10 +35,12 @@ for dataset_dir in dataset_dirs:
                        '''
                        print "Defective values stats: \n", defective_vals_for_feature.describe()
                        print "Non defective values stats: \n", non_defective_vals_for_feature.describe()
-                       TS, p = stats.mannwhitneyu(list(defective_vals_for_feature), list(non_defective_vals_for_feature), alternative='greater')
-                       cliffs_delta = cliffsDelta.cliffsDelta(list(defective_vals_for_feature), list(non_defective_vals_for_feature))
-                       print 'pee value:{}, cliffs:{}'.format( p, cliffs_delta)
-                       print '='*50
+                       def_val, non_def_val = list(defective_vals_for_feature), list(non_defective_vals_for_feature)
+                       if(np.unique(def_val)==np.unique(non_def_val)):
+                          TS, p = stats.mannwhitneyu(def_val, non_def_val, alternative='greater')
+                          cliffs_delta = cliffsDelta.cliffsDelta(def_val, non_def_val)
+                          print 'pee value:{}, cliffs:{}'.format( p, cliffs_delta)
+                          print '='*50
                        '''
                        all data summary
                        '''
