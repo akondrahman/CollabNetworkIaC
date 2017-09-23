@@ -6,7 +6,8 @@ Saturday
 '''
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn import decomposition
-import process_metric_utility , numpy as np , pandas as pd, sklearn_utility
+import process_metric_utility , numpy as np , pandas as pd
+from itertools import combinations
 glimpseIndex=10
 
 def getPCAInsights(pcaParamObj, no_of_pca_comp_to_see):
@@ -27,4 +28,19 @@ def getPCAInsights(pcaParamObj, no_of_pca_comp_to_see):
         print '$'*15
     print "+"*25
 
+def constructCombos(ds_param):
+        ds_lists = []
+        for dir_ in os.listdir(ds_param):
+            if (dir_!='.DS_Store'):
+               dir2look = dataset_dir + dir_ + '/'
+               file2look = dir2look + 'FINAL.GRAPH.METRIC.csv'
+               ds_lists.append(file2look)
+        return list(combinations(ds_lists))
+
 if __name__=='__main__':
+   ds_dir   = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/MOZILLA/"
+   # ds_dir = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/OPENSTACK/"
+   # ds_dir = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/WIKIMEDIA/"
+
+   train_test_combos = constructCombos(ds_dir)
+   print train_test_combos
