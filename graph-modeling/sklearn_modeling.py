@@ -66,7 +66,7 @@ def performRF(training_set_param, test_set_param, training_labels_param, actual_
   theRndForestModel.fit(training_set_param, training_labels_param)
   the_predicted_labels = theRndForestModel.predict(test_set_param)
   rf_area_under_roc = evalClassifier(actual_labels_param, the_predicted_labels)
-  print "(CROSS-ORG): For {} area under ROC is: {}".format(infoP, rf_area_under_roc[0])
+  print "For {} area under ROC is: {}".format(infoP, rf_area_under_roc[0])
   return rf_area_under_roc
 
 
@@ -76,7 +76,7 @@ def performCART(training_set_param, test_set_param, training_labels_param, actua
   theCartModel.fit(training_set_param, training_labels_param)
   the_predicted_labels = theCartModel.predict(test_set_param)
   cart_area_under_roc = evalClassifier(actual_labels_param, the_predicted_labels)
-  print "(CROSS-ORG): For {} area under ROC is: {}".format(infoP, cart_area_under_roc[0])
+  print "For {} area under ROC is: {}".format(infoP, cart_area_under_roc[0])
   return cart_area_under_roc
 
 def performSVC(training_set_param, test_set_param, training_labels_param, actual_labels_param, infoP):
