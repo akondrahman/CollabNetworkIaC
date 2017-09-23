@@ -72,5 +72,5 @@ if __name__=='__main__':
        '''
        do prediction: 10 times iteration
        '''
-       #sklearn_modeling.performIterativeModeling(train_log_features, test_log_features, train_labels, test_labels, folder_to_save, 10)
+       sklearn_modeling.performIterativeModeling(train_log_features, test_log_features, train_labels, test_labels, folder_to_save, 10)
        print '='*100

@@ -10,6 +10,14 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn import linear_model
 import utility
 
+'''
+globals
+'''
+cart_output_file ='CROSS_ORG_PRED_PERF_CART.csv'
+rf_output_file   ='CROSS_ORG_PRED_PERF_RF.csv'
+svm_output_file  ='CROSS_ORG_PRED_PERF_SVM.csv'
+logi_output_file ='CROSS_ORG_PRED_PERF_LOGIREG.csv'
+
 def evalClassifier(actualLabels, predictedLabels):
   '''
     the way skelarn treats is the following: first index -> lower index -> 0 -> 'Low'
@@ -107,7 +115,7 @@ def dumpPredPerfValuesToFile(iterations, predPerfVector, fileName):
      fmeas  = predPerfVector[3][cnt]
      str2write = str2write + str(auc_) + ',' + str(prec_) + ',' + str(recal) + ',' + str(fmeas) + ',' +  '\n'
    str2write = headerStr + '\n' + str2write
-   bytes_ = Utility.dumpContentIntoFile(str2write, fileName)
+   bytes_ = utility.dumpContentIntoFile(str2write, fileName)
    print "Created {} of {} bytes".format(fileName, bytes_)
 
 

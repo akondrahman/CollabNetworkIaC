@@ -52,3 +52,13 @@ def getFeaturesAndLabels(file_name_param):
        print "No of. defects={}, non-defects={}".format(defected_file_count, non_defected_file_count)
        print "-"*50
        return log_transformed_train_features, all_labels
+
+
+
+
+
+def dumpContentIntoFile(strP, fileP):
+  fileToWrite = open( fileP, 'w')
+  fileToWrite.write(strP )
+  fileToWrite.close()
+  return str(os.stat(fileP).st_size)
