@@ -8,6 +8,7 @@ from sklearn.ensemble import ExtraTreesClassifier
 from sklearn import decomposition
 import numpy as np , pandas as pd, os
 from itertools import combinations
+import utility
 glimpseIndex=10
 
 def getPCAInsights(pcaParamObj, no_of_pca_comp_to_see):
@@ -53,5 +54,13 @@ if __name__=='__main__':
    # ds_dir = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/OPENSTACK/"
    # ds_dir = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/WIKIMEDIA/"
 
+   iterations = 10
+
    train_test_combos = constructCombos(ds_dir)
-   print train_test_combos
+   #print train_test_combos
+   for train_file, test_file in train_test_combos:
+       '''
+       training dataset zone
+       '''
+       log_features, labels = utility.getFeaturesAndLabels(train_file)
+       print '='*100
