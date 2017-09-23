@@ -30,15 +30,6 @@ def evalClassifier(actualLabels, predictedLabels):
   #print "Glimpse at  actual:{}, and predicted:{} labels(10th entry in label list)".format(actualLabels[10], predictedLabels[10])
   print classification_report(actualLabels, predictedLabels, target_names=target_labels)
   print">"*25
-  '''
-  getting the confusion matrix
-  '''
-  #conf_matr_output = confusion_matrix(actualLabels, predictedLabels)
-  print "Confusion matrix start"
-  #print conf_matr_output
-  conf_matr_output = pd.crosstab(actualLabels, predictedLabels, rownames=['True'], colnames=['Predicted'], margins=True)
-  print conf_matr_output
-  print "Confusion matrix end"
   # preserve the order first test(real values from dataset), then predcited (from the classifier )
   '''
   the precision score is computed as follows:

@@ -51,7 +51,7 @@ def constructCombos(ds_param):
 
 if __name__=='__main__':
    ds_dir   = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/MOZILLA/"
-   folder_to_save = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/output/MOZILLA/"
+   folder_to_save = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/output/MOZILLA_TIME_PRED_RES/"
 
    # ds_dir = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/OPENSTACK/"
    # ds_dir = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/WIKIMEDIA/"
@@ -71,8 +71,8 @@ if __name__=='__main__':
        '''
        do prediction: 10 times iteration
        '''
-       folder_to_save = folder_to_save +  str(index_) + '/'
-       if((os.path.exists(folder_to_save))==False):
-           os.makedirs(folder_to_save)
-       sklearn_modeling.performIterativeModeling(train_log_features, test_log_features, train_labels, test_labels, folder_to_save, 10)
+       folder2write = folder_to_save +  str(index_) + '/'
+       if((os.path.exists(folder2write))==False):
+           os.makedirs(folder2write)
+       sklearn_modeling.performIterativeModeling(train_log_features, test_log_features, train_labels, test_labels, folder2write, 10)
        print '='*100
