@@ -51,8 +51,8 @@ def constructCombos(ds_param):
 
 
 if __name__=='__main__':
-   # ds_dir   = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/MOZILLA/"
-   # folder_to_save = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/output/MOZILLA_BFS_TIME_PRED_RES/"
+   ds_dir   = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/MOZILLA/"
+   folder_to_save = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/output/MOZILLA_BFS_TIME_PRED_RES/"
    #
    # ds_dir   = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dataset/OPENSTACK/"
    # folder_to_save = "/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/output/OPENSTACK_BFS_TIME_PRED_RES/"

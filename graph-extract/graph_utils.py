@@ -67,9 +67,9 @@ def getAllMonthsFromDataset(categ_file_param):
              repo_     = row[1]
              categ_    = row[3]
              if categ_=='N':
-                 defect_status = '1'
-             else:
                  defect_status = '0'
+             else:
+                 defect_status = '1'
              filepath_ = row[4]
              time_ = getTimeInfo(id_, repo_)
              time2write = time_.split(' ')[0]
