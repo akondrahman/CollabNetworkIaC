@@ -26,6 +26,24 @@ def getGitProgrammerInfo(param_file_path, repo_path):
    edge_list = [(x_[0], x_[1]) for x_ in temp_edge_list if x_[0] != x_[1]] ## used list comprehension to egenrate valid edges
    return (edge_list, node_cnt)
 
+def getHgProgrammerInfo(param_file_path, repo_path):
+   cdCommand         = "cd " + repo_path + " ; "
+   theFile           = os.path.relpath(param_file_path, repo_path)
+   commitCountCmd    = "hg churn --diffstat  " + theFile + " | awk '{print $1}'  "
+   command2Run = cdCommand + commitCountCmd
+
+   commit_count_output = subprocess.check_output(['bash','-c', command2Run])
+   author_count_output = commit_count_output.split('\n')
+   author_count_output = [x_ for x_ in author_count_output if x_!='']
+   node_cnt            = len(np.unique(author_count_output)) ## get node count
+
+   ## create edges using combinations
+   ## get unique author names
+   uni_aut_names = np.unique(author_count_output)
+   temp_edge_list = list(itertools.permutations(uni_aut_names, 2))
+   edge_list = [(x_[0], x_[1]) for x_ in temp_edge_list if x_[0] != x_[1]] ## used list comprehension to egenrate valid edges
+   return (edge_list, node_cnt)
+
 def getGraphData(file_path_p, repo_path_p):
     if 'moz' in file_path_p:
         graph_per_file = getHgProgrammerInfo(file_path_p, repo_path_p)
