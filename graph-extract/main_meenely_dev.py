@@ -6,6 +6,8 @@ Meenely's Dev Network
 import os
 import csv
 import itertools
+import subprocess
+import numpy as np
 
 def getGitProgrammerInfo(param_file_path, repo_path):
    cdCommand         = "cd " + repo_path + " ; "
@@ -18,7 +20,8 @@ def getGitProgrammerInfo(param_file_path, repo_path):
    author_count_output = [x_ for x_ in author_count_output if x_!='']
    node_cnt            = len(np.unique(author_count_output)) ## get node count
    ## create edges using combinations
-   edge_list = list(itertools.permutations(author_count_output, 2))
+   temp_edge_list = list(itertools.permutations(author_count_output, 2))
+   edge_list = [(x_[0], x_[1]) for x_ in temp_edge_list if x_[0] != x_[1]] ## used list comprehension to egenrate valid edges
    return (edge_list, node_cnt)
 
 def getGraphData(file_path_p, repo_path_p):
