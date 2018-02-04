@@ -20,7 +20,9 @@ def getGitProgrammerInfo(param_file_path, repo_path):
    author_count_output = [x_ for x_ in author_count_output if x_!='']
    node_cnt            = len(np.unique(author_count_output)) ## get node count
    ## create edges using combinations
-   temp_edge_list = list(itertools.permutations(author_count_output, 2))
+   ## get unique author names
+   uni_aut_names = np.unique(author_count_output)
+   temp_edge_list = list(itertools.permutations(uni_aut_names, 2))
    edge_list = [(x_[0], x_[1]) for x_ in temp_edge_list if x_[0] != x_[1]] ## used list comprehension to egenrate valid edges
    return (edge_list, node_cnt)
 
