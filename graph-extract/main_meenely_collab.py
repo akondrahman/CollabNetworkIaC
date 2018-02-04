@@ -90,7 +90,8 @@ def getGraphData(file_path_p, repo_path_p):
     else:
         graph_per_file = getGitProgrammerInfo(file_path_p, repo_path_p)
     ### now return value
-    print 'File:{}, Graph:{}'.format(file_path_p, graph_per_file)
+    # print 'File:{}, Graph:{}'.format(file_path_p, graph_per_file)
+    print 'Processing {} ...'.format(file_path_p)
     return graph_per_file
 
 def getEdgeForFiles(file_path_p):
@@ -104,7 +105,7 @@ def getEdgeForFiles(file_path_p):
         full_path_of_file  = row_[4]
         if os.path.exists(full_path_of_file):
             if full_path_of_file not in output_dict:
-                gr_for_file = getGraphData(full_path_of_file, repo_of_file)                
+                gr_for_file = getGraphData(full_path_of_file, repo_of_file)
                 output_dict[full_path_of_file] = gr_for_file
     return output_dict
 
@@ -114,7 +115,7 @@ if __name__=='__main__':
     ### INPUT
     # theCompleteCategFile='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Cisco_Categ_For_DB.csv'
     # theCompleteCategFile='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Mirantis_Categ_For_DB.csv'
-    theCompleteCategFile='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Mozilla.Final.Categ.csv'
+    # theCompleteCategFile='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Mozilla.Final.Categ.csv'
     # theCompleteCategFile='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Openstack.WithoutBadBoys.Final.Categ.csv'
     # theCompleteCategFile='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Wikimedia.Final.Categ.csv'
 
@@ -123,7 +124,7 @@ if __name__=='__main__':
     ### OUTPUT
     # datasetFile2Save='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/collab-ds/CIS.PKL'
     # datasetFile2Save='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/collab-ds/MIR.PKL'
-    datasetFile2Save='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/collab-ds/MOZ.PKL'
+    # datasetFile2Save='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/collab-ds/MOZ.PKL'
     # datasetFile2Save='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/collab-ds/OST.PKL'
     # datasetFile2Save='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/collab-ds/WIK.PKL'
 
