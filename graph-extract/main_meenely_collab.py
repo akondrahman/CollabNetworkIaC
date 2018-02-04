@@ -90,8 +90,8 @@ def getGraphData(file_path_p, repo_path_p):
     else:
         graph_per_file = getGitProgrammerInfo(file_path_p, repo_path_p)
     ### now return value
-    # print 'File:{}, Graph:{}'.format(file_path_p, graph_per_file)
-    print 'Processing {} ...'.format(file_path_p)
+    print 'File:{}, Graph:{}'.format(file_path_p, graph_per_file)
+    # print 'Processing {} ...'.format(file_path_p)
     return graph_per_file
 
 def getEdgeForFiles(file_path_p):

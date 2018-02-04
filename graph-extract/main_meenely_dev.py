@@ -87,4 +87,4 @@ if __name__=='__main__':
     # datasetFile2Save='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dev-ds/WIK.PKL'
 
     final_dict = getGraphForFiles(theCompleteCategFile)
-    # pickle.dump(final_dict, open(datasetFile2Save, 'wb'))
+    pickle.dump(final_dict, open(datasetFile2Save, 'wb'))
