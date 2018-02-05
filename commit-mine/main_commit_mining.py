@@ -72,6 +72,7 @@ def getCommitTimeData(file_path_param):
          id_of_file     = row_[0]
          repo_of_file   = row_[1]
          categ_of_file  = row_[3]
+         full_path_of_file  = row_[4]
          defect_status  = ''
          if categ_of_file=='N':
              defect_status = '0'
@@ -80,32 +81,26 @@ def getCommitTimeData(file_path_param):
          if repo_of_file.endswith('/')==False:
             repo_of_file = repo_of_file + '/'
          file2read = repo_of_file + 'fullThrottle_id_msg_map.csv'
-         dict_key = repo_of_file + '*' + str(id_of_file) + '*' + defect_status
+         dict_key = repo_of_file + '*' + str(id_of_file) + '*' + defect_status + '*' + full_path_of_file
          with open(file2read, 'rU') as file_:
               reader_ = csv.reader(file_)
               for row_ in reader_:
                   tstamp = row_[3]
                   if dict_key not in dict2ret:
-                      dict2ret[dict_key] = tstamp
+                      dict2ret[tstamp] = dict_key
     return dict2ret
 
 def getCommitData(file_path_p):
-    output_dict = {}
     commitTimeDict=getCommitTimeData(file_path_p)
-    with open(file_path_p, 'rU') as file_:
-      reader_ = csv.reader(file_)
-      next(reader_, None)
-      for row_ in reader_:
-        repo_of_file       = row_[1]
-        categ_of_file      = row_[3]
-        full_path_of_file  = row_[4]
+    for time_, value_ in commitTimeDict.iteritems():
+        date_ = time_.split(' ')[0]
+        full_path_of_file = value_.split('*')[-1]
         if os.path.exists(full_path_of_file):
-            if full_path_of_file not in output_dict:
-               print full_path_of_file
+               print full_path_of_file, date_
                commit_dates = getDateofCommits(full_path_of_file, repo_of_file)
                commit_additions = getAddedChurnMetrics(full_path_of_file, repo_of_file)
                commit_deletions = getDeletedChurnMetrics(full_path_of_file, repo_of_file)
-    return output_dict
+
 
 if __name__=='__main__':
     theCompleteCategFile='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Cisco_Categ_For_DB.csv'
