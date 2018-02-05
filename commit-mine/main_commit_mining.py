@@ -95,9 +95,21 @@ def getCommitData(file_path_p):
     for time_, value_ in commitTimeDict.iteritems():
         date_ = time_.split(' ')[0]
         full_path_of_file = value_.split('*')[-1]
+        repo_of_file = value_.split('*')[0]
+        defect_status = value_.split('*')[2]
         if os.path.exists(full_path_of_file):
-               print full_path_of_file, date_
                commit_dates = getDateofCommits(full_path_of_file, repo_of_file)
+               # print full_path_of_file, date_, commit_dates
+               if date_ in commit_dates:
+                   indices = [i for i, x_ in enumerate(commit_dates) if x_ == date_]
+                   # print indices
+               else: ## find clossest matching date
+                   month_ = date_.split('-')[0] + '-' + date_.split('-')[1]
+                   commit_months = [x_.split('-')[0] + '-' + x_.split('-')[1] for x_ in commit_dates]
+                   print month_, commit_months
+                   if month_ in commit_months:
+                      indices = [i for i, x_ in enumerate(commit_dates) if x_ == date_]
+                      print indices
                commit_additions = getAddedChurnMetrics(full_path_of_file, repo_of_file)
                commit_deletions = getDeletedChurnMetrics(full_path_of_file, repo_of_file)
 
