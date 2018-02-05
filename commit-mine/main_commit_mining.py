@@ -63,8 +63,35 @@ def getDeletedChurnMetrics(param_file_path, repo_path):
 
    return del_churn_output
 
+def getCommitTimeData(file_path_param):
+    dict2ret = {}
+    with open(file_path_param, 'rU') as file_:
+      reader_ = csv.reader(file_)
+      next(reader_, None)
+      for row_ in reader_:
+         id_of_file     = row_[0]
+         repo_of_file   = row_[1]
+         categ_of_file  = row_[3]
+         defect_status  = ''
+         if categ_of_file=='N':
+             defect_status = '0'
+         else:
+             defect_status = '1'
+         if repo_of_file.endswith('/')==False:
+            repo_of_file = repo_of_file + '/'
+         file2read = repo_of_file + 'fullThrottle_id_msg_map.csv'
+         dict_key = repo_of_file + '*' + str(id_of_file) + '*' + defect_status
+         with open(file2read, 'rU') as file_:
+              reader_ = csv.reader(file_)
+              for row_ in reader_:
+                  tstamp = row_[3]
+                  if dict_key not in dict2ret:
+                      dict2ret[dict_key] = tstamp
+    return dict2ret
+
 def getCommitData(file_path_p):
     output_dict = {}
+    commitTimeDict=getCommitTimeData(file_path_p)
     with open(file_path_p, 'rU') as file_:
       reader_ = csv.reader(file_)
       next(reader_, None)
