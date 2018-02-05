@@ -90,6 +90,13 @@ def getCommitTimeData(file_path_param):
                       dict2ret[tstamp] = dict_key
     return dict2ret
 
+def mapMinedDataToCommit(index_list, add_list, del_list):
+    add_holder , del_holder  = [], []
+    for ind_ in index_list:
+        add_holder.append(add_list[ind_])
+        del_holder.append(del_list[ind_])
+    return np.median(add_list), np.median(del_list)
+
 def getCommitData(file_path_p):
     commitTimeDict=getCommitTimeData(file_path_p)
     for time_, value_ in commitTimeDict.iteritems():
@@ -108,10 +115,12 @@ def getCommitData(file_path_p):
                    commit_months = [x_.split('-')[0] + '-' + x_.split('-')[1] for x_ in commit_dates]
                    print month_, commit_months
                    if month_ in commit_months:
-                      indices = [i for i, x_ in enumerate(commit_dates) if x_ == date_]
+                      indices = [i for i, x_ in enumerate(commit_months) if x_ == month_]
                       print indices
                commit_additions = getAddedChurnMetrics(full_path_of_file, repo_of_file)
                commit_deletions = getDeletedChurnMetrics(full_path_of_file, repo_of_file)
+               mined_data_for_commit = mapMinedDataToCommit(indices, commit_additions, commit_deletions) ##returns a tuple
+               print mined_data_for_commit, defect_status
 
 
 if __name__=='__main__':
