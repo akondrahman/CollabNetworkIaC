@@ -26,7 +26,7 @@ def getDateofCommits(param_file_path, repo_path):
    dt_churn_output = [x_ for x_ in dt_churn_output if x_!='']
    # print dt_churn_output
    date_output = [x_[-4:] + '-' + monthDict[x_[0:3]] + '-' + x_[3:5] for x_ in dt_churn_output ]
-   # print date_output
+   # print len(date_output)
    return date_output
 
 def getAddedChurnMetrics(param_file_path, repo_path):
@@ -43,10 +43,9 @@ def getAddedChurnMetrics(param_file_path, repo_path):
    add_churn_output = [x_ for x_ in add_churn_output if x_!='']
    # print add_churn_output
    add_churn_output = [int(y_) for y_ in add_churn_output if y_.isdigit()]
-   #print add_churn_output
-   totalAddedLinesForChurn = sum(add_churn_output)
-   #print totalAddedLinesForChurn
-   return totalAddedLinesForChurn
+   # print len(add_churn_output)
+
+   return add_churn_output
 
 def getDeletedChurnMetrics(param_file_path, repo_path):
    totalDeletedLinesForChurn = 0
@@ -60,10 +59,9 @@ def getDeletedChurnMetrics(param_file_path, repo_path):
    del_churn_output = del_churn_output.split('\n')
    del_churn_output = [x_ for x_ in del_churn_output if x_!='']
    del_churn_output = [int(y_) for y_ in del_churn_output if y_.isdigit()]
-   #print del_churn_output
-   totalDeletedLinesForChurn = sum(del_churn_output)
-   print totalDeletedLinesForChurn
-   return totalDeletedLinesForChurn
+   # print len(del_churn_output)
+
+   return del_churn_output
 
 def getCommitData(file_path_p):
     output_dict = {}
