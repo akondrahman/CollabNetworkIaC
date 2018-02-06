@@ -91,11 +91,37 @@ def getCommitTimeData(file_path_param):
     return dict2ret
 
 def mapMinedDataToCommit(index_list, add_list, del_list):
-    add_holder , del_holder  = [], []
+    add_holder , del_holder, add_del_holder  = [], [], []
+    temp_add, temp_del, tmp_add_del = 0, 0, 0
     for ind_ in index_list:
-        add_holder.append(add_list[ind_])
-        del_holder.append(del_list[ind_])
-    return np.median(add_list), np.median(del_list)
+        if ((ind_ < len(add_list)) and (ind_ < len(del_list))):
+           # print ind_, add_list, del_list
+           temp_add, temp_del = add_list[ind_], del_list[ind_]
+           add_holder.append(temp_add)
+           del_holder.append(temp_del)
+           tmp_add_del = temp_add + temp_del
+           add_del_holder.append(tmp_add_del)
+        else:
+           temp_add, temp_del = 0, 0
+           add_holder.append(temp_add)
+           del_holder.append(temp_del)
+           tmp_add_del = temp_add + temp_del
+           add_del_holder.append(tmp_add_del)
+    return np.median(add_holder), np.median(del_holder), np.median(tmp_add_del)
+
+def getContribCount(param_file_path, repo_path):
+   minorList = []
+   cdCommand         = "cd " + repo_path + " ; "
+   theFile           = os.path.relpath(param_file_path, repo_path)
+   blameCommand      = " git blame " + theFile + "  | awk '{print $2}'  | cut -d'(' -f2"
+   command2Run       = cdCommand + blameCommand
+
+   blame_output   = subprocess.check_output(['bash','-c', command2Run])
+   blame_output   = blame_output.split('\n')
+   blame_output   = [x_ for x_ in blame_output if x_!='']
+   author_contrib = dict(Counter(blame_output))
+   print author_contrib
+
 
 def getCommitData(file_path_p):
     commitTimeDict=getCommitTimeData(file_path_p)
@@ -105,6 +131,7 @@ def getCommitData(file_path_p):
         repo_of_file = value_.split('*')[0]
         defect_status = value_.split('*')[2]
         if os.path.exists(full_path_of_file):
+               contrib_dict = getContribCount(full_path_of_file, repo_of_file)
                commit_dates = getDateofCommits(full_path_of_file, repo_of_file)
                # print full_path_of_file, date_, commit_dates
                if date_ in commit_dates:
@@ -113,14 +140,14 @@ def getCommitData(file_path_p):
                else: ## find clossest matching date
                    month_ = date_.split('-')[0] + '-' + date_.split('-')[1]
                    commit_months = [x_.split('-')[0] + '-' + x_.split('-')[1] for x_ in commit_dates]
-                   print month_, commit_months
+                   # print month_, commit_months
                    if month_ in commit_months:
                       indices = [i for i, x_ in enumerate(commit_months) if x_ == month_]
-                      print indices
+                      # print indices
                commit_additions = getAddedChurnMetrics(full_path_of_file, repo_of_file)
                commit_deletions = getDeletedChurnMetrics(full_path_of_file, repo_of_file)
                mined_data_for_commit = mapMinedDataToCommit(indices, commit_additions, commit_deletions) ##returns a tuple
-               print mined_data_for_commit, defect_status
+               print mined_data_for_commit, defect_status, date_
 
 
 if __name__=='__main__':
