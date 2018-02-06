@@ -110,6 +110,18 @@ def mapMinedDataToCommit(index_list, add_list, del_list):
            add_del_holder.append(tmp_add_del)
     return np.median(add_holder), np.median(del_holder), np.median(tmp_add_del)
 
+def getContributorsForCommits(param_file_path, repo_path):
+   cdCommand         = "cd " + repo_path + " ; "
+   theFile           = os.path.relpath(param_file_path, repo_path)
+   blameCommand      = " git blame " + theFile + "  | awk {'print $2 " " $4'} | cut -d'(' -f2 | sed -e 's/ /,/g'
+   command2Run       = cdCommand + blameCommand
+
+   blame_output   = subprocess.check_output(['bash','-c', command2Run])
+   blame_output   = blame_output.split('\n')
+   blame_output   = [x_ for x_ in blame_output if x_!='']
+
+   print blame_output
+
 def getContribCount(param_file_path, repo_path):
    minorList = []
    cdCommand         = "cd " + repo_path + " ; "
@@ -121,7 +133,8 @@ def getContribCount(param_file_path, repo_path):
    blame_output   = blame_output.split('\n')
    blame_output   = [x_ for x_ in blame_output if x_!='']
    author_contrib = dict(Counter(blame_output))
-   print author_contrib
+   # print author_contrib
+   return author_contrib
 
 
 def getCommitData(file_path_p):
@@ -147,6 +160,8 @@ def getCommitData(file_path_p):
                       # print indices
                commit_additions = getAddedChurnMetrics(full_path_of_file, repo_of_file)
                commit_deletions = getDeletedChurnMetrics(full_path_of_file, repo_of_file)
+               commit_contrib   = getContributorsForCommits(full_path_of_file, repo_of_file)
+               ### map teh data
                mined_data_for_commit = mapMinedDataToCommit(indices, commit_additions, commit_deletions) ##returns a tuple
                print mined_data_for_commit, defect_status, date_
 
