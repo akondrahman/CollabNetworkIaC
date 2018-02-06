@@ -145,27 +145,31 @@ def getContribCount(param_file_path, repo_path):
    # print author_contrib
    return author_contrib
 
-def plotFeature(df_p):
+def plotFeature(df_p, feat2plot, file_p):
     # fig, ax = plt.subplots()
     # for key, grp in df_p.groupby(['DEF_STA']):
     #     print key
     #     ax = grp.plot(ax=ax, kind='line', x='DATE', y='ADD', c=key, label=key)
     x_axis = [x_ for x_ in xrange(len(df_p['DATE'].tolist()))]
-    y_axis = df_p['ADD'].tolist()
-    colors = df_p['DEFECT'].tolist()
+    y_axis = df_p[feat2plot].tolist()
+    colors = df_p['DEF_STA'].tolist()
     # enable drawing of multiple graphs on one plot
     kcolors = ['red' if value_=='1' else 'green' for value_ in colors]
     plt.scatter(x_axis, y_axis, c = kcolors)
     plt.legend()
-    plt.show()
+    # plt.show()
+    file2save = '/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/output/plots/' + file_p.replace('/', '.') + '.' + feat2plot + '.png'
+    plt.savefig(file2save)
 
 def doAnalysis(full_df_p):
     all_files = np.unique(full_df_p['FILE_PATH'].tolist())
+    all_feat  = ['ADD', 'DEL', 'TOT', 'CONTRIB_LOC']
     for file_ in all_files:
         per_file_df =  full_df_p[full_df_p['FILE_PATH']==file_]
         sort_file_df = per_file_df.sort_values(by=['DATE'])
         # print sort_file_df
-        plotFeature(sort_file_df)
+        for feat_ in all_feat:
+            plotFeature(sort_file_df, feat_, file_)
 
 def getCommitData(file_path_p):
     commitTimeDict=getCommitTimeData(file_path_p)
