@@ -92,23 +92,20 @@ def getCommitTimeData(file_path_param):
     return dict2ret
 
 def mapMinedDataToCommit(index_list, add_list, del_list):
-    add_holder , del_holder, add_del_holder  = [], [], []
-    temp_add, temp_del, tmp_add_del = 0, 0, 0
+    add_holder , del_holder  = [], []
+    temp_add, temp_del = 0, 0
     for ind_ in index_list:
         if ((ind_ < len(add_list)) and (ind_ < len(del_list))):
            # print ind_, add_list, del_list
            temp_add, temp_del = add_list[ind_], del_list[ind_]
            add_holder.append(temp_add)
            del_holder.append(temp_del)
-           tmp_add_del = temp_add + temp_del
-           add_del_holder.append(tmp_add_del)
         else:
            temp_add, temp_del = 0, 0
            add_holder.append(temp_add)
            del_holder.append(temp_del)
-           tmp_add_del = temp_add + temp_del
-           add_del_holder.append(tmp_add_del)
-    return np.median(add_holder), np.median(del_holder), np.median(tmp_add_del)
+    tmp_add_del = np.median(add_holder) + np.median(del_holder)
+    return np.median(add_holder), np.median(del_holder), tmp_add_del
 
 def getContributorsForCommits(param_file_path, repo_path):
    cdCommand         = "cd " + repo_path + " ; "
@@ -124,10 +121,14 @@ def getContributorsForCommits(param_file_path, repo_path):
    for val_ in blame_output:
        author_ = val_.split(',')[0]
        date_   = val_.split(',')[1]
-       month_  = date_.split('-')[0] + date_.split('-')[1]
-       if date_ not date_dict:
+       # print date_
+       if '-' in date_:
+           month_  = date_.split('-')[0] + '-' + date_.split('-')[1]
+       else:
+           month_  = '2012-01'
+       if date_ not in date_dict:
           date_dict[date_] = author_
-       if month_ not mo_dict:
+       if month_ not in mo_dict:
           mo_dict[date_] = author_
    return date_dict, mo_dict
 
