@@ -148,7 +148,7 @@ def getContribCount(param_file_path, repo_path):
 def plotFeature(df_p):
     fig, ax = plt.subplots()
     for key, grp in df_p.groupby(['DEF_STA']):
-        ax = grp.plot(ax=ax, kind='line', x='x', y='y', c=key, label=key)
+        ax = grp.plot(ax=ax, kind='line', x='DATE', y='ADD', c=key, label=key)
     plt.legend(loc='best')
     plt.show()
 
