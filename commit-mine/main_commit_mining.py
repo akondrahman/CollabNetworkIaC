@@ -144,6 +144,12 @@ def getContribCount(param_file_path, repo_path):
    # print author_contrib
    return author_contrib
 
+def doAnalysis(full_df_p):
+    all_files = np.unique(full_df_p['FILE_PATH'].to_list())
+    for file_ in all_files:
+        per_file_df =  full_df_p[full_df_p['FILE_PATH']==file_]
+        sort_file_df = per_file_df.sort_values(by=['DATE'])
+        print sort_file_df 
 
 def getCommitData(file_path_p):
     commitTimeDict=getCommitTimeData(file_path_p)
@@ -186,9 +192,10 @@ def getCommitData(file_path_p):
                # print file_list
                perFileDFList = perFileDFList + file_list
 
-    labels = ['Date', 'ADD', 'DEL', 'TOT', 'DEF_STA', 'CONTRIB_LOC', 'FILE_PATH']
+    labels = ['DATE', 'ADD', 'DEL', 'TOT', 'DEF_STA', 'CONTRIB_LOC', 'FILE_PATH']
     full_ds_df = pd.DataFrame.from_records(perFileDFList, columns=labels)
     print full_ds_df.head()
+    doAnalysis(full_ds_df)
 
 if __name__=='__main__':
     theCompleteCategFile='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Cisco_Categ_For_DB.csv'
