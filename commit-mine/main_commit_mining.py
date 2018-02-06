@@ -10,6 +10,7 @@ import csv
 import subprocess
 import numpy as np
 from collections import Counter
+import pandas as pd
 
 monthDict            = {'Jan':'01', 'Feb':'02', 'Mar':'03', 'Apr':'04', 'May':'05', 'Jun':'06',
                          'Jul':'07', 'Aug':'08', 'Sep':'09', 'Oct':'10', 'Nov':'11', 'Dec':'12'}
@@ -91,21 +92,18 @@ def getCommitTimeData(file_path_param):
                       dict2ret[tstamp] = dict_key
     return dict2ret
 
-def mapMinedDataToCommit(index_list, add_list, del_list):
-    add_holder , del_holder  = [], []
+def mapMinedDataToCommit(index_list, add_list, del_list, contrib_per_file, defect_status, date_, full_path_file_p):
     temp_add, temp_del = 0, 0
+    perFileTuple = []
     for ind_ in index_list:
         if ((ind_ < len(add_list)) and (ind_ < len(del_list))):
-           # print ind_, add_list, del_list
            temp_add, temp_del = add_list[ind_], del_list[ind_]
-           add_holder.append(temp_add)
-           del_holder.append(temp_del)
         else:
            temp_add, temp_del = 0, 0
-           add_holder.append(temp_add)
-           del_holder.append(temp_del)
-    tmp_add_del = np.median(add_holder) + np.median(del_holder)
-    return np.median(add_holder), np.median(del_holder), tmp_add_del
+        comm_tot = temp_add + temp_del
+        perFileTuple.append((date_, temp_add, temp_del, comm_tot, defect_status, contrib_per_file, full_path_file_p))
+    return perFileTuple
+
 
 def getContributorsForCommits(param_file_path, repo_path):
    cdCommand         = "cd " + repo_path + " ; "
@@ -149,6 +147,7 @@ def getContribCount(param_file_path, repo_path):
 
 def getCommitData(file_path_p):
     commitTimeDict=getCommitTimeData(file_path_p)
+    perFileDFList = []
     for time_, value_ in commitTimeDict.iteritems():
         date_ = time_.split(' ')[0]
         full_path_of_file = value_.split('*')[-1]
@@ -182,9 +181,14 @@ def getCommitData(file_path_p):
                       if author_ in contrib_dict:
                          contrib_per_file = contrib_dict[author_]
                ### map teh data
-               mined_data_for_commit = mapMinedDataToCommit(indices, commit_additions, commit_deletions) ##returns a tuple
-               print mined_data_for_commit, defect_status, date_, contrib_per_file
+               file_list = mapMinedDataToCommit(indices, commit_additions, commit_deletions, contrib_per_file, defect_status, date_, full_path_of_file) ##returns a df from all commits
+               # print mined_data_for_commit, defect_status, date_, contrib_per_file
+               # print file_list
+               perFileDFList = perFileDFList + file_list
 
+    labels = ['Date', 'ADD', 'DEL', 'TOT', 'DEF_STA', 'CONTRIB_LOC', 'FILE_PATH']
+    full_ds_df = pd.DataFrame.from_records(perFileDFList, columns=labels)
+    print full_ds_df.head()
 
 if __name__=='__main__':
     theCompleteCategFile='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Cisco_Categ_For_DB.csv'
