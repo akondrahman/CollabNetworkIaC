@@ -113,14 +113,23 @@ def mapMinedDataToCommit(index_list, add_list, del_list):
 def getContributorsForCommits(param_file_path, repo_path):
    cdCommand         = "cd " + repo_path + " ; "
    theFile           = os.path.relpath(param_file_path, repo_path)
-   blameCommand      = " git blame " + theFile + "  | awk {'print $2 " " $4'} | cut -d'(' -f2 | sed -e 's/ /,/g'
+   blameCommand      = " git blame " + theFile + "  | awk {'print $2 \" \" $4'} | cut -d'(' -f2 | sed -e 's/ /,/g' "
    command2Run       = cdCommand + blameCommand
 
    blame_output   = subprocess.check_output(['bash','-c', command2Run])
    blame_output   = blame_output.split('\n')
    blame_output   = [x_ for x_ in blame_output if x_!='']
 
-   print blame_output
+   date_dict, mo_dict = {}, {}
+   for val_ in blame_output:
+       author_ = val_.split(',')[0]
+       date_   = val_.split(',')[1]
+       month_  = date_.split('-')[0] + date_.split('-')[1]
+       if date_ not date_dict:
+          date_dict[date_] = author_
+       if month_ not mo_dict:
+          mo_dict[date_] = author_
+   return date_dict, mo_dict
 
 def getContribCount(param_file_path, repo_path):
    minorList = []
@@ -160,10 +169,20 @@ def getCommitData(file_path_p):
                       # print indices
                commit_additions = getAddedChurnMetrics(full_path_of_file, repo_of_file)
                commit_deletions = getDeletedChurnMetrics(full_path_of_file, repo_of_file)
-               commit_contrib   = getContributorsForCommits(full_path_of_file, repo_of_file)
+               commit_contrib_dt, commit_contrib_mo = getContributorsForCommits(full_path_of_file, repo_of_file)
+               if date_ in commit_contrib_dt:
+                  author_ = commit_contrib_dt[date_]
+                  if author_ in contrib_dict:
+                      contrib_per_file = contrib_dict[author_]
+               else:
+                   month_ = date_.split('-')[0] + '-' + date_.split('-')[1]
+                   if month_ in commit_contrib_mo:
+                      author_ = commit_contrib_mo[month_]
+                      if author_ in contrib_dict:
+                         contrib_per_file = contrib_dict[author_]
                ### map teh data
                mined_data_for_commit = mapMinedDataToCommit(indices, commit_additions, commit_deletions) ##returns a tuple
-               print mined_data_for_commit, defect_status, date_
+               print mined_data_for_commit, defect_status, date_, contrib_per_file
 
 
 if __name__=='__main__':
