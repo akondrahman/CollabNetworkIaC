@@ -153,11 +153,12 @@ def plotFeature(df_p, feat2plot, file_p):
     x_axis = [x_ for x_ in xrange(len(df_p['DATE'].tolist()))]
     y_axis = df_p[feat2plot].tolist()
     colors = df_p['DEF_STA'].tolist()
+
     # enable drawing of multiple graphs on one plot
     kcolors = ['red' if value_=='1' else 'green' for value_ in colors]
-    plt.scatter(x_axis, y_axis, c = kcolors)
+    plt.plot(x_axis, y_axis, c = kcolors)
     plt.legend()
-    plt.axis([-50, 150, -50, 150])
+    # plt.axis([-50, 150, -50, 150])
     # plt.show()
     file2save = '/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/output/plots/' + file_p.replace('/', '_') + '.' + feat2plot + '.png'
     # print file2save
@@ -169,7 +170,7 @@ def doAnalysis(full_df_p):
     for file_ in all_files:
         per_file_df =  full_df_p[full_df_p['FILE_PATH']==file_]
         sort_file_df = per_file_df.sort_values(by=['DATE'])
-        # print sort_file_df
+        print sort_file_df.describe()
         for feat_ in all_feat:
             plotFeature(sort_file_df, feat_, file_)
 
