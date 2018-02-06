@@ -157,8 +157,10 @@ def plotFeature(df_p, feat2plot, file_p):
     kcolors = ['red' if value_=='1' else 'green' for value_ in colors]
     plt.scatter(x_axis, y_axis, c = kcolors)
     plt.legend()
+    plt.axis([-50, 150, -50, 150])
     # plt.show()
-    file2save = '/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/output/plots/' + file_p.replace('/', '.') + '.' + feat2plot + '.png'
+    file2save = '/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/output/plots/' + file_p.replace('/', '_') + '.' + feat2plot + '.png'
+    # print file2save
     plt.savefig(file2save)
 
 def doAnalysis(full_df_p):
@@ -173,7 +175,7 @@ def doAnalysis(full_df_p):
 
 def getCommitData(file_path_p):
     commitTimeDict=getCommitTimeData(file_path_p)
-    perFileDFList = []
+    perFileDFList, indices, contrib_per_file = [], [], 0
     for time_, value_ in commitTimeDict.iteritems():
         date_ = time_.split(' ')[0]
         full_path_of_file = value_.split('*')[-1]
@@ -207,10 +209,11 @@ def getCommitData(file_path_p):
                       if author_ in contrib_dict:
                          contrib_per_file = contrib_dict[author_]
                ### map teh data
-               file_list = mapMinedDataToCommit(indices, commit_additions, commit_deletions, contrib_per_file, defect_status, date_, full_path_of_file) ##returns a df from all commits
-               # print mined_data_for_commit, defect_status, date_, contrib_per_file
-               # print file_list
-               perFileDFList = perFileDFList + file_list
+               if (len(indices) > 0):
+                  file_list = mapMinedDataToCommit(indices, commit_additions, commit_deletions, contrib_per_file, defect_status, date_, full_path_of_file) ##returns a df from all commits
+                  # print mined_data_for_commit, defect_status, date_, contrib_per_file
+                  # print file_list
+                  perFileDFList = perFileDFList + file_list
 
     labels = ['DATE', 'ADD', 'DEL', 'TOT', 'DEF_STA', 'CONTRIB_LOC', 'FILE_PATH']
     full_ds_df = pd.DataFrame.from_records(perFileDFList, columns=labels)
