@@ -12,6 +12,8 @@ import numpy as np
 from collections import Counter
 import pandas as pd
 import matplotlib.pyplot as plt
+from scipy import stats
+import cliffsDelta
 
 monthDict            = {'Jan':'01', 'Feb':'02', 'Mar':'03', 'Apr':'04', 'May':'05', 'Jun':'06',
                          'Jul':'07', 'Aug':'08', 'Sep':'09', 'Oct':'10', 'Nov':'11', 'Dec':'12'}
@@ -170,9 +172,36 @@ def doAnalysis(full_df_p):
     for file_ in all_files:
         per_file_df =  full_df_p[full_df_p['FILE_PATH']==file_]
         sort_file_df = per_file_df.sort_values(by=['DATE'])
-        print sort_file_df.describe()
-        for feat_ in all_feat:
-            plotFeature(sort_file_df, feat_, file_)
+        # print sort_file_df.describe()
+        for feature_ in all_feat:
+           #print feature_
+           '''
+           all data summary
+           '''
+           data_for_feature = sort_file_df[feature_]
+           median_, mean_, total_ = np.median(data_for_feature), np.mean(data_for_feature), sum(data_for_feature)
+           print "Feature:{}, [ALL DATA] median:{}, mean:{}, sum:{}".format(feature_, median_, mean_, total_  )
+           print '='*25
+           defective_vals_for_feature     = sort_file_df[sort_file_df['DEF_STA']==1][feature_]
+           non_defective_vals_for_feature = sort_file_df[sort_file_df['DEF_STA']==0][feature_]
+           '''
+           summary time
+           '''
+           print 'THE FEATURE IS:', feature_
+           print '='*25
+           #print "Defective values stats: \n", defective_vals_for_feature.describe()
+           print "Defective values [MEDIAN]:{}, [MEAN]:{}".format(np.median(list(defective_vals_for_feature)), np.mean(list(defective_vals_for_feature)))
+           #d_perc_90 = np.percentile(defective_vals_for_feature, 90)
+           #print "Non defective values stats: \n", non_defective_vals_for_feature.describe()
+           print "Non Defective values [MEDIAN]:{}, [MEAN]:{}".format(np.median(list(non_defective_vals_for_feature)), np.mean(list(non_defective_vals_for_feature)))
+           #nd_perc_90 = np.percentile(non_defective_vals_for_feature, 90)
+           TS, p = stats.mannwhitneyu(list(defective_vals_for_feature), list(non_defective_vals_for_feature), alternative='greater')
+           cliffs_delta = cliffsDelta.cliffsDelta(list(defective_vals_for_feature), list(non_defective_vals_for_feature))
+           print 'Feature:{}, pee value:{}, cliffs:{}'.format(feature_, p, cliffs_delta)
+           print '='*25
+        print '*'*100
+        # for feat_ in all_feat:
+            # plotFeature(sort_file_df, feat_, file_)
 
 def getCommitData(file_path_p):
     commitTimeDict=getCommitTimeData(file_path_p)
