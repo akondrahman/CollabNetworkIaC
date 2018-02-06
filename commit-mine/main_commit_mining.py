@@ -146,9 +146,14 @@ def getContribCount(param_file_path, repo_path):
    return author_contrib
 
 def plotFeature(df_p):
-    fig, ax = plt.subplots()
-    for key, grp in df_p.groupby(['DEF_STA']):
-        ax = grp.plot(ax=ax, kind='line', x='DATE', y='ADD', c=key, label=key)
+    # fig, ax = plt.subplots()
+    # for key, grp in df_p.groupby(['DEF_STA']):
+    #     print key
+    #     ax = grp.plot(ax=ax, kind='line', x='DATE', y='ADD', c=key, label=key)
+    x_axis = [x_ for x_ in xrange(len(df_p['DATE'].tolist()))]
+    colors = df_p['DEF_STA']
+    colors = [int(x_) for x_ in colors]
+    plt.scatter(x_axis, df_p['ADD'], c=colors, cmap=plt.cm.autumn)
     plt.legend(loc='best')
     plt.show()
 
