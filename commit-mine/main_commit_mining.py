@@ -11,6 +11,7 @@ import subprocess
 import numpy as np
 from collections import Counter
 import pandas as pd
+import matplotlib.pyplot as plt
 
 monthDict            = {'Jan':'01', 'Feb':'02', 'Mar':'03', 'Apr':'04', 'May':'05', 'Jun':'06',
                          'Jul':'07', 'Aug':'08', 'Sep':'09', 'Oct':'10', 'Nov':'11', 'Dec':'12'}
@@ -144,12 +145,20 @@ def getContribCount(param_file_path, repo_path):
    # print author_contrib
    return author_contrib
 
+def plotFeature(df_p):
+    fig, ax = plt.subplots()
+    for key, grp in df_p.groupby(['DEF_STA']):
+        ax = grp.plot(ax=ax, kind='line', x='x', y='y', c=key, label=key)
+    plt.legend(loc='best')
+    plt.show()
+
 def doAnalysis(full_df_p):
-    all_files = np.unique(full_df_p['FILE_PATH'].to_list())
+    all_files = np.unique(full_df_p['FILE_PATH'].tolist())
     for file_ in all_files:
         per_file_df =  full_df_p[full_df_p['FILE_PATH']==file_]
         sort_file_df = per_file_df.sort_values(by=['DATE'])
-        print sort_file_df 
+        # print sort_file_df
+        plotFeature(sort_file_df)
 
 def getCommitData(file_path_p):
     commitTimeDict=getCommitTimeData(file_path_p)
