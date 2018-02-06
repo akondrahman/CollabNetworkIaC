@@ -151,10 +151,12 @@ def plotFeature(df_p):
     #     print key
     #     ax = grp.plot(ax=ax, kind='line', x='DATE', y='ADD', c=key, label=key)
     x_axis = [x_ for x_ in xrange(len(df_p['DATE'].tolist()))]
-    colors = df_p['DEF_STA']
-    colors = [int(x_) for x_ in colors]
-    plt.scatter(x_axis, df_p['ADD'], c=colors, cmap=plt.cm.autumn)
-    plt.legend(loc='best')
+    y_axis = df_p['ADD'].tolist()
+    colors = df_p['DEFECT'].tolist()
+    # enable drawing of multiple graphs on one plot
+    kcolors = ['red' if value_=='1' else 'green' for value_ in colors]
+    plt.scatter(x_axis, y_axis, c = kcolors)
+    plt.legend()
     plt.show()
 
 def doAnalysis(full_df_p):
