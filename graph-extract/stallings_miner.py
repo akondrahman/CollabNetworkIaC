@@ -7,148 +7,14 @@ import math
 import os, subprocess, numpy as np, operator
 from  collections import Counter
 from  scipy.stats import entropy
+import time
+import datetime
+import csv
+
 monthDict            = {'Jan':'01', 'Feb':'02', 'Mar':'03', 'Apr':'04', 'May':'05', 'Jun':'06',
                          'Jul':'07', 'Aug':'08', 'Sep':'09', 'Oct':'10', 'Nov':'11', 'Dec':'12'}
 
 
-def getCommitCount(param_file_path, repo_path):
-   totalCountForChurn = 0
-
-   cdCommand            = "cd " + repo_path + " ; "
-   theFile              = os.path.relpath(param_file_path, repo_path)
-   commitCommand        = "git log  --format=%cd " + theFile + " | awk '{ print $2 $3 $5}' | sed -e 's/ /,/g'"
-   command2Run          = cdCommand + commitCommand
-
-   dt_churn_output = subprocess.check_output(['bash','-c', command2Run])
-   dt_churn_output = dt_churn_output.split('\n')
-   dt_churn_output = [x_ for x_ in dt_churn_output if x_!='']
-   totalCountForChurn = len(dt_churn_output)
-   #print totalCountForChurn
-   return totalCountForChurn
-
-def calculateMonthDiffFromTwoDates(early, latest):
-    from datetime import datetime
-    early_year   = early.split('-')[0]
-    latest_year  = latest.split('-')[0]
-    early_month  = early.split('-')[-1]
-    latest_month = latest.split('-')[-1]
-    early_dt     = datetime(int(early_year), int(early_month), 1)
-    latest_dt    = datetime(int(latest_year), int(latest_month), 1)
-
-    return (latest_dt.year - early_dt.year)*12 + latest_dt.month - early_dt.month
-def getAge(param_file_path, repo_path):
-   earliestMonth   = '2015-08'
-   age = '0'
-
-   cdCommand            = "cd " + repo_path + " ; "
-   theFile              = os.path.relpath(param_file_path, repo_path)
-   commitCommand        = "git log  --format=%cd " + theFile + " | awk '{ print $2 $3 $5}' | sed -e 's/ /,/g'"
-   command2Run          = cdCommand + commitCommand
-
-   dt_churn_output = subprocess.check_output(['bash','-c', command2Run])
-   dt_churn_output = dt_churn_output.split('\n')
-   dt_churn_output = [x_ for x_ in dt_churn_output if x_!='']
-   #print dt_churn_output
-   monthList = [dob[0:3] for dob in  dt_churn_output]
-   yearist = [dob[-4:] for dob in  dt_churn_output]
-   monthAndYeatList = [dob[-4:] + '-' + monthDict[dob[0:3]] for dob in dt_churn_output]
-   monthAndYeatList.sort()
-   #print monthAndYeatList
-   if len(monthAndYeatList) > 1:
-    earliestMonth  = monthAndYeatList[0]
-    latesttMonth    = monthAndYeatList[-1]
-    age = str(calculateMonthDiffFromTwoDates(earliestMonth, latesttMonth))
-   elif len(monthAndYeatList) > 0:
-        earliestMonth  = monthAndYeatList[0]
-   else:
-    age = '0'
-   #print age
-   return age, earliestMonth
-
-
-
-def getUniqueDevCount(param_file_path, repo_path):
-
-   cdCommand         = "cd " + repo_path + " ; "
-   theFile           = os.path.relpath(param_file_path, repo_path)
-   #print "full path: {}, repo path:{}, theFile:{}".format(param_file_path, repo_path, theFile)
-   commitCountCmd    = " git blame "+ theFile +"  | awk '{print $2}' | cut -d'(' -f2 "
-   command2Run = cdCommand + commitCountCmd
-
-   commit_count_output = subprocess.check_output(['bash','-c', command2Run])
-   author_count_output = commit_count_output.split('\n')
-   author_count_output = [x_ for x_ in author_count_output if x_!='']
-   author_count        = len(np.unique(author_count_output))
-   #print author_count
-   return author_count
-
-def getProgrammerMultiTasking(param_file_path, repo_path, dict_):
-   '''
-    first get all the programmers
-   '''
-   cdCommand         = "cd " + repo_path + " ; "
-   theFile           = os.path.relpath(param_file_path, repo_path)
-   commitCountCmd    = " git blame "+ theFile +"  | awk '{print $2}' | cut -d'(' -f2 "
-   command2Run = cdCommand + commitCountCmd
-
-   commit_count_output = subprocess.check_output(['bash','-c', command2Run])
-   progr_name_output   = commit_count_output.split('\n')
-   progr_name_output   = [x_ for x_ in progr_name_output if x_!='']
-
-   sol_mt_prog_list, non_sol_mt_prog_list = [], []
-   for progr_ in progr_name_output:
-       if progr_ in dict_:
-          all_files_worked          = dict_[progr_] # this is a list of files tocuhed by the programmer
-          sol_files_worked          = [x_ for x_ in all_files_worked if '.sol' in x_]
-          non_sol_files_worked      = [x_ for x_ in all_files_worked if '.sol' not in x_]
-          uni_sol_files_worked      = np.unique(sol_files_worked)
-          uni_non_sol_files_worked  = np.unique(non_sol_files_worked)
-          # if each programmer worked on more solidity files, then the programmer is multi tasking for Puppet files
-          # if each programmer worked on more non solidity files, then the programmer is multi tasking for non-Puppet files
-          if (len(uni_sol_files_worked) > 1):
-              sol_mt_prog_list.append(progr_)
-          if (len(uni_non_sol_files_worked) > 1):
-              non_sol_mt_prog_list.append(progr_)
-   return len(np.unique(sol_mt_prog_list)), len(np.unique(non_sol_mt_prog_list))
-
-
-
-def getAvgConsecutiveTimeDiff(month_year_list_param):
-    counter = 0
-    consecList = []
-    len_    = len(month_year_list_param)
-    for index_ in xrange(len_):
-        first_  = month_year_list_param[index_]
-        if((index_+1) < len_):
-          second_ = month_year_list_param[index_+1]
-          month_diff = calculateMonthDiffFromTwoDates(first_, second_)
-          consecList.append(month_diff)
-    #print consecList
-    avg_month_diff = round(np.mean(consecList), 5)
-    return avg_month_diff
-
-
-def getAverageTimeBetweenEdits(param_file_path, repo_path):
-
-   cdCommand         = "cd " + repo_path + " ; "
-   theFile           = os.path.relpath(param_file_path, repo_path)
-   commitCommand     = "git log  --format=%cd " + theFile + " | awk '{ print $2 $3 $5}' | sed -e 's/ /,/g'"
-   command2Run       = cdCommand + commitCommand
-
-   dt_churn_output = subprocess.check_output(['bash','-c', command2Run])
-   dt_churn_output = dt_churn_output.split('\n')
-   dt_churn_output = [x_ for x_ in dt_churn_output if x_!='']
-   #print dt_churn_output
-   monthList = [dob[0:3] for dob in  dt_churn_output]
-   yearist = [dob[-4:] for dob in  dt_churn_output]
-   monthAndYeatList = [dob[-4:] + '-' + monthDict[dob[0:3]] for dob in dt_churn_output]
-   monthAndYeatList.sort()
-   #print monthAndYeatList
-   avgConsecutiveTimeDiff = getAvgConsecutiveTimeDiff(monthAndYeatList)
-   if((avgConsecutiveTimeDiff == float("NaN")) or (avgConsecutiveTimeDiff == float("NaN"))):
-        avgConsecutiveTimeDiff = float(0)
-   #print avgConsecutiveTimeDiff
-   return avgConsecutiveTimeDiff
 
 def getAddedChurnMetrics(param_file_path, repo_path):
    totalAddedLinesForChurn = 0
@@ -382,7 +248,7 @@ def getPuppetFileDetails(theCompleteCategFile, org_dir):
              dict2Ret[file_name_] = (repo_name_, defect_status)
     return dict2Ret
 
-def getStallingsMetrics(file_path_p, repo_path_p, org, cat_df ):
+def getStallingsMetrics(file_path_p, repo_path_p, org, full_ds_cat_df ):
    all_process_metrics = ''
 
    headerOfFile0='ORG,SCRIPT_PATH,'
@@ -391,7 +257,12 @@ def getStallingsMetrics(file_path_p, repo_path_p, org, cat_df ):
    headerOfFile3='CREATION_DATE,'
    headerOfFile4='CURR_DEFECT_STATUS'
 
-   print cat_df
+   # print full_ds_cat_df.head()
+
+   file_df   = full_ds_cat_df[full_ds_cat_df['filepath']==file_path_p]
+   sorted_df = file_df.sort('msgid', ascending=True)
+   print sorted_df.head()
+
    all_process_metrics = all_process_metrics + org + ',' + repo_path_p + ',' + file_path_p + ','
 
    return all_process_metrics

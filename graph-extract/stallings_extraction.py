@@ -5,6 +5,7 @@ Sep 09, 2018
 '''
 import stallings_miner
 import pandas as pd
+import os 
 
 def getAllProcessMetricsForSingleFile(full_path_param, repo_path_param, org_of_file, full_categ_df):
       process_metrics =  stallings_miner.getStallingsMetrics(full_path_param, repo_path_param, org_of_file, full_categ_df)
@@ -37,7 +38,7 @@ if __name__=='__main__':
 
   print "Started at:", stallings_miner.giveTimeStamp()
   fullPuppMap   = stallings_miner.getPuppetFileDetails(theCompleteCategFile, org_name)
-  print "Loaded the security smells mapping of files ... "
+  print "Loaded mapping of Puppet files ... "
   print "-"*100
   full_categ_df = pd.read_csv(theCompleteCategFile)
   str_ = getAllProcessMetricForAllFiles(fullPuppMap, datasetFile2Save, org_name, full_categ_df)
