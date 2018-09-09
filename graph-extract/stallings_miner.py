@@ -200,16 +200,34 @@ def getDateAddMap(date_list, added_lines):
            dict_[date_] = additions
     return dict_
 
-def getPrevMetricData(defect_list, added_list, window_p):
-    prev_defect_status = '0'
-    if(len(defect_list) > window_p):
+def makeChunks(l, n):
+    for i in range(0, len(l), n):
+        yield l[i:i+n]
 
-    else:
+def getIndiMetrics(defect_list, added_list):
+      prev_defect_status = ''
       defects = np.unique(defect_list)
       if ((len(defects) == 1) and (defects[0]=='N')):
-         prev_defect_status = '0'
+          prev_defect_status = '0'
       else:
           prev_defect_status = '1'
+      str_to_ret = prev_defect_status + ',' + np.mean(added_list) ',' + np.median(added_list)
+      return str_to_ret
+
+def getPrevMetricData(defect_list, added_list, window_p):
+    prev_defect_status = '0'
+    str_to_ret = ''
+    if(len(defect_list) > window_p):
+      splitted_defect_list   = list(makeChunks(defect_list, window_p))
+      splitted_addition_list = list(makeChunks(added_list, window_p))
+      for ind_ in len(xrange(splitted_defect_list)):
+         indi_defect_list, indi_added_list = splitted_defect_list[ind_] , splitted_addition_list[ind_]
+         str_ = getIndiMetrics(indi_defect_list, indi_added_list)
+         str_to_ret = str_to_ret + str_
+    else:
+         str_to_ret = getIndiMetrics(defect_list, added_list)
+
+    return str_to_ret
 
 def getStallingsMetrics(file_path_p, repo_path_p, org, full_ds_cat_df ):
    all_process_metrics = ''
