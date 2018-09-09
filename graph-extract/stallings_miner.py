@@ -16,8 +16,7 @@ monthDict            = {'Jan':'01', 'Feb':'02', 'Mar':'03', 'Apr':'04', 'May':'0
 
 
 
-def getAddedChurnMetrics(param_file_path, repo_path):
-   totalAddedLinesForChurn = 0
+def getAddedLines(param_file_path, repo_path):
 
    cdCommand         = "cd " + repo_path + " ; "
    theFile           = os.path.relpath(param_file_path, repo_path)
@@ -27,14 +26,26 @@ def getAddedChurnMetrics(param_file_path, repo_path):
    add_churn_output = subprocess.check_output(['bash','-c', command2Run])
    add_churn_output = add_churn_output.split('\n')
    add_churn_output = [x_ for x_ in add_churn_output if x_!='']
-   #print add_churn_output
-   add_churn_output = [int(y_) for y_ in add_churn_output if y_.isdigit()]
-   #print add_churn_output
-   totalAddedLinesForChurn = sum(add_churn_output)
-   #print totalAddedLinesForChurn
-   return totalAddedLinesForChurn
+   addition_output  = [int(y_) for y_ in add_churn_output if y_.isdigit()]
 
+   return addition_output
 
+def getDate(param_file_path, repo_path):
+   totalCountForChurn   = 0
+
+   cdCommand            = "cd " + repo_path + " ; "
+   theFile              = os.path.relpath(param_file_path, repo_path)
+   commitCommand        = "git log  --format=%cd " + theFile + " | awk '{ print $2 $3 $5}' | sed -e 's/ /,/g'"
+   command2Run          = cdCommand + commitCommand
+
+   dt_churn_output = subprocess.check_output(['bash','-c', command2Run])
+   dt_churn_output = dt_churn_output.split('\n')
+   dt_churn_output = [x_ for x_ in dt_churn_output if x_!='']
+   print dt_churn_output
+
+   dateList = [dob[-4:] + '-' + monthDict[dob[0:3]]  for dob in dt_churn_output]
+
+   return dateList
 
 
 def getDeletedChurnMetrics(param_file_path, repo_path):
@@ -126,84 +137,6 @@ def getHighestContribsPerc(param_file_path, repo_path, sloc):
        sloc += 1
    return (round(float(highest_contr)/float(sloc), 5))*100
 
-def getDeveloperScatternessOfFile(param_file_path, repo_path, sloc):
-   '''
-   output list
-   '''
-   lineNoProb        = []
-   lineNoCnt         = []
-   '''
-   '''
-   cdCommand         = "cd " + repo_path + " ; "
-   theFile           = os.path.relpath(param_file_path, repo_path)
-   blameCommand      = " git blame -n " + theFile + " | awk '{print $2}' "
-   command2Run       = cdCommand + blameCommand
-   lineNoProb        = []
-
-   blame_output      = subprocess.check_output(['bash','-c', command2Run])
-   blame_output      = blame_output.split('\n')
-   blame_output      = [x_ for x_ in blame_output if x_!='']
-   line_chng_dict    = dict(Counter(blame_output))
-   #print line_chng_dict
-   for lineNo in xrange(sloc):
-       line_key  = str(lineNo + 1)
-       if (line_key in line_chng_dict):
-          line_cnt  = line_chng_dict[line_key]
-       else:
-          line_cnt  = 0
-       line_prob = float(line_cnt)/float(sloc)
-       lineNoProb.append(line_prob) ### Version 1
-       lineNoCnt.append(line_cnt)   ### Version 2
-   #print "len:{}, list:{}, loc:{}".format(len(lineNoProb), lineNoProb, sloc)
-   scatterness_prob = round(entropy(lineNoProb), 5)  ##Version 1
-   scatterness_cnt  = round(entropy(lineNoCnt), 5)  ##Version 2
-   '''
-   handling -inf, inf, nan
-   '''
-   if((scatterness_cnt == float("-inf")) or (scatterness_cnt == float("inf")) or (scatterness_cnt == float("nan")) or math.isnan(scatterness_cnt)):
-     scatterness_cnt = float(0)
-   #print "list:{} ...\n prob->entropy:{}".format(lineNoProb, scatterness_prob)
-   #print "list:{} ...\n count->entropy:{} ...sloc:{}".format(lineNoCnt, scatterness_cnt, sloc)
-   #return scatterness_prob, scatterness_cnt
-   return scatterness_cnt
-
-'''
-neew metric: non soliodity percentage per commit, normalized by number of commits
-'''
-
-def getNonSolPerc(param_file_path, repo_path):
-    final_metric = 0.0
-    cdCommand     = "cd " + repo_path + " ; "
-    theFile       = os.path.relpath(param_file_path, repo_path)
-    command       = " git log -p " + theFile + "  | grep 'diff' "
-    command2Run   = cdCommand + command
-    try:
-        diff_lines    = subprocess.check_output(['bash','-c', command2Run])
-        diff_lines    = diff_lines.split('\n')
-        diff_lines    = [x_ for x_ in diff_lines if x_ != '\n' ]
-        non_sol_per_lis = []
-        for log_output in diff_lines:
-            log_output    = log_output.split(' ')
-            log_output    = [x_ for x_ in log_output if (('/' in x_) and ('.' in x_))]
-            sol_files     = [x_ for x_ in log_output if x_.endswith('.sol')]
-            non_sol_files = [x_ for x_ in log_output if x_.endswith('.sol')==False]
-            #print sol_files, non_sol_files
-            tot_files     = len(sol_files) + len(non_sol_files)
-            if tot_files < 1:
-               tot_files += 1
-            if len(non_sol_files) < 1:
-               non_sol_cnt  = 0
-            else:
-               non_sol_cnt = len(non_sol_files)
-            non_sol_per   = float(non_sol_cnt)/float(tot_files)
-            non_sol_per_lis.append(non_sol_per)
-        if (len(non_sol_per_lis) > 0):
-           final_metric = np.mean(non_sol_per_lis)
-    except subprocess.CalledProcessError as e_:
-        print 'Exception in Git mining ... skipping:' + e_.message
-
-    return final_metric
-
 
 def createDataset(str2Dump, datasetNameParam):
    headerOfFile0='ORG,SCRIPT_PATH,'
@@ -258,10 +191,18 @@ def getStallingsMetrics(file_path_p, repo_path_p, org, full_ds_cat_df ):
    headerOfFile4='CURR_DEFECT_STATUS'
 
    # print full_ds_cat_df.head()
-
    file_df   = full_ds_cat_df[full_ds_cat_df['filepath']==file_path_p]
-   sorted_df = file_df.sort('msgid', ascending=True)
-   print sorted_df.head()
+   sorted_df = file_df.sort_values(by='msgid', ascending=True)
+   # print sorted_df.head()
+
+   file_added_lines = getAddedLines(file_path_p, repo_path_p)
+   file_defect_stat = sorted_df['categ'].tolist()
+   file_date_list   = getDate(file_path_p, repo_path_p)
+
+   print file_added_lines
+   print file_defect_stat
+   print file_date_list
+
 
    all_process_metrics = all_process_metrics + org + ',' + repo_path_p + ',' + file_path_p + ','
 
