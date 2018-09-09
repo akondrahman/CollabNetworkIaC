@@ -31,7 +31,7 @@ def getAddedLines(param_file_path, repo_path):
    return addition_output
 
 def getDate(param_file_path, repo_path):
-   totalCountForChurn   = 0
+   dateList = []
 
    cdCommand            = "cd " + repo_path + " ; "
    theFile              = os.path.relpath(param_file_path, repo_path)
@@ -41,9 +41,19 @@ def getDate(param_file_path, repo_path):
    dt_churn_output = subprocess.check_output(['bash','-c', command2Run])
    dt_churn_output = dt_churn_output.split('\n')
    dt_churn_output = [x_ for x_ in dt_churn_output if x_!='']
-   print dt_churn_output
+   # print dt_churn_output
+   formatDate = lambda x_ : '0' + x_ if (len(x_) < 2) else x_
 
-   dateList = [dob[-4:] + '-' + monthDict[dob[0:3]]  for dob in dt_churn_output]
+   for dob in dt_churn_output:
+       year = dob[-4:]
+       mont = monthDict[dob[0:3]]
+       if len(dob) > 8:
+          day = dob[3:5]
+       else:
+          day = '0' + dob[3:4]
+       # full_date = year + '-' + mont + '-' + day
+       full_date = year + '-' + mont
+       dateList.append(full_date)
 
    return dateList
 
@@ -181,6 +191,15 @@ def getPuppetFileDetails(theCompleteCategFile, org_dir):
              dict2Ret[file_name_] = (repo_name_, defect_status)
     return dict2Ret
 
+def getDateAddMap(date_list, added_lines):
+    dict_ = {}
+    for cnt in xrange(len(added_lines)):
+        date_ = date_list[cnt]
+        additions = added_lines[cnt]
+        if date_ not in dict_:
+           dict_[date_] = additions
+    return dict_
+
 def getStallingsMetrics(file_path_p, repo_path_p, org, full_ds_cat_df ):
    all_process_metrics = ''
 
@@ -199,10 +218,32 @@ def getStallingsMetrics(file_path_p, repo_path_p, org, full_ds_cat_df ):
    file_defect_stat = sorted_df['categ'].tolist()
    file_date_list   = getDate(file_path_p, repo_path_p)
 
-   print file_added_lines
-   print file_defect_stat
-   print file_date_list
-
+   # print file_added_lines
+   # print file_date_list
+   if (len(file_added_lines)==len(file_defect_stat)):
+       print file_defect_stat, file_added_lines, '='
+   else:
+       # date_to_add_map = getDateAddMap(file_date_list, file_added_lines)
+       # # print date_to_add_map
+       # dates_in_df  = sorted_df['date'].tolist()
+       # months_in_df = [x_.split('-')[0] + '-' + x_.split('-')[1] for x_ in dates_in_df]
+       # final_added_lines = []
+       # for mont_ in months_in_df:
+       #     if mont_ in date_to_add_map:
+       #        final_added_lines.append(date_to_add_map[mont_])
+       #
+       # print file_defect_stat
+       # print final_added_lines
+       defect_list, addition_list = [], []
+       rev_def_stat = list(reversed(file_defect_stat))
+       rev_add_line = list(reversed(file_added_lines))
+       for ind in xrange(len(rev_def_stat)):
+           if ind < len(rev_add_line):
+              def_sta = rev_def_stat[ind]
+              add_lin = rev_add_line[ind]
+              defect_list.append(def_sta)
+              addition_list.append(add_lin)
+       print defect_list, addition_list, '>'
 
    all_process_metrics = all_process_metrics + org + ',' + repo_path_p + ',' + file_path_p + ','
 
