@@ -5,10 +5,10 @@ Sep 09, 2018
 '''
 import stallings_miner
 import pandas as pd
-import os 
+import os
 
 def getAllProcessMetricsForSingleFile(full_path_param, repo_path_param, org_of_file, full_categ_df):
-      process_metrics =  stallings_miner.getStallingsMetrics(full_path_param, repo_path_param, org_of_file, full_categ_df)
+      process_metrics =  stallings_miner.getStallingsMetrics(full_path_param, repo_path_param, org_of_file, full_categ_df, 5)
       print "-"*50
       print process_metrics
       print "Generated the process metrics ... "

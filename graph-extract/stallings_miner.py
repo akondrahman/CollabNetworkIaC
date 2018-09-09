@@ -211,7 +211,7 @@ def getIndiMetrics(defect_list, added_list):
           prev_defect_status = '0'
       else:
           prev_defect_status = '1'
-      str_to_ret = prev_defect_status + ',' + np.mean(added_list) ',' + np.median(added_list)
+      str_to_ret = prev_defect_status + ',' + str(np.mean(added_list)) ',' + str(np.median(added_list)) + '\n'
       return str_to_ret
 
 def getPrevMetricData(defect_list, added_list, window_p):
@@ -229,7 +229,7 @@ def getPrevMetricData(defect_list, added_list, window_p):
 
     return str_to_ret
 
-def getStallingsMetrics(file_path_p, repo_path_p, org, full_ds_cat_df ):
+def getStallingsMetrics(file_path_p, repo_path_p, org, full_ds_cat_df , window):
    all_process_metrics = ''
 
    headerOfFile0='ORG,SCRIPT_PATH,'
@@ -250,8 +250,8 @@ def getStallingsMetrics(file_path_p, repo_path_p, org, full_ds_cat_df ):
    # print file_added_lines
    # print file_date_list
    if (len(file_added_lines)==len(file_defect_stat)):
-       print file_defect_stat, file_added_lines, '='
-       getPrevMetricData(file_defect_stat, file_added_lines, 5)
+       # print file_defect_stat, file_added_lines, '='
+       per_file_str = getPrevMetricData(file_defect_stat, file_added_lines, window)
    else:
        # date_to_add_map = getDateAddMap(file_date_list, file_added_lines)
        # # print date_to_add_map
@@ -273,8 +273,10 @@ def getStallingsMetrics(file_path_p, repo_path_p, org, full_ds_cat_df ):
               add_lin = rev_add_line[ind]
               defect_list.append(def_sta)
               addition_list.append(add_lin)
-       print defect_list, addition_list, '>'
+       # print defect_list, addition_list, '>'
+       per_file_str = getPrevMetricData(file_defect_stat, file_added_lines, window)
 
+   print per_file_str
    all_process_metrics = all_process_metrics + org + ',' + repo_path_p + ',' + file_path_p + ','
 
    return all_process_metrics
