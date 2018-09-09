@@ -23,7 +23,7 @@ def getAllProcessMetricForAllFiles(pupp_map_dict_param, datasetFile2Save, org_na
            repo_, defect_status = details_
            if (file_!= 'WTF') and (os.path.exists(file_)):
               fileCount = fileCount + 1
-              print "Analyzing ... \nfile#{}\ndefect status:{}\nfile:{}\nrepo:{}".format(fileCount, defect_status, file_, repo_)
+              print "Analyzing ... \nfile#{}\nfile:{}\nrepo:{}".format(fileCount, file_, repo_)
               all_metric_for_this_file = getAllProcessMetricsForSingleFile(file_, repo_, org_name, full_categ_df)
               str2ret = str2ret + all_metric_for_this_file + defect_status + '\n'
               print "="*75

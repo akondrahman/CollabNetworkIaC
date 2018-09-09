@@ -204,25 +204,36 @@ def makeChunks(l, n):
     for i in range(0, len(l), n):
         yield l[i:i+n]
 
-def getIndiMetrics(defect_list, added_list):
-      prev_defect_status = ''
+def getIndiMetrics(defect_list, added_list, repo_p, file_p):
+      prev_defect_status, curr_defect_status = '', ''
+      #before calculation remove current data point
+      if (len(defect_list) > 1):
+         curr_defect_value = defect_list.pop()
+         added_list.pop()
+      else:
+         curr_defect_value = defect_list[0]
+      if curr_defect_value != 'N':
+          curr_defect_status = '1'
+      else:
+          curr_defect_status = '0'
+      # now do calculation
       defects = np.unique(defect_list)
       if ((len(defects) == 1) and (defects[0]=='N')):
           prev_defect_status = '0'
       else:
           prev_defect_status = '1'
-      str_to_ret = prev_defect_status + ',' + str(np.mean(added_list)) ',' + str(np.median(added_list)) + '\n'
+      str_to_ret = , repo_p + ',' + file_p + ',' + prev_defect_status + ',' + str(np.mean(added_list)) + ',' + str(np.median(added_list)) + ',' + curr_defect_status + '\n'
       return str_to_ret
 
-def getPrevMetricData(defect_list, added_list, window_p):
+def getPrevMetricData(defect_list, added_list, window_p, repo_p, file_p):
     prev_defect_status = '0'
     str_to_ret = ''
     if(len(defect_list) > window_p):
       splitted_defect_list   = list(makeChunks(defect_list, window_p))
       splitted_addition_list = list(makeChunks(added_list, window_p))
-      for ind_ in len(xrange(splitted_defect_list)):
+      for ind_ in xrange(len(splitted_defect_list)):
          indi_defect_list, indi_added_list = splitted_defect_list[ind_] , splitted_addition_list[ind_]
-         str_ = getIndiMetrics(indi_defect_list, indi_added_list)
+         str_ = getIndiMetrics(indi_defect_list, indi_added_list, repo_p, file_p)
          str_to_ret = str_to_ret + str_
     else:
          str_to_ret = getIndiMetrics(defect_list, added_list)
@@ -274,9 +285,8 @@ def getStallingsMetrics(file_path_p, repo_path_p, org, full_ds_cat_df , window):
               defect_list.append(def_sta)
               addition_list.append(add_lin)
        # print defect_list, addition_list, '>'
-       per_file_str = getPrevMetricData(file_defect_stat, file_added_lines, window)
+       per_file_str = getPrevMetricData(file_defect_stat, file_added_lines, window, repo_path_p, file_path_p)
 
    print per_file_str
-   all_process_metrics = all_process_metrics + org + ',' + repo_path_p + ',' + file_path_p + ','
 
-   return all_process_metrics
+   return per_file_str
