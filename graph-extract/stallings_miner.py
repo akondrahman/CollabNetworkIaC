@@ -200,6 +200,17 @@ def getDateAddMap(date_list, added_lines):
            dict_[date_] = additions
     return dict_
 
+def getPrevMetricData(defect_list, added_list, window_p):
+    prev_defect_status = '0'
+    if(len(defect_list) > window_p):
+
+    else:
+      defects = np.unique(defect_list)
+      if ((len(defects) == 1) and (defects[0]=='N')):
+         prev_defect_status = '0'
+      else:
+          prev_defect_status = '1'
+
 def getStallingsMetrics(file_path_p, repo_path_p, org, full_ds_cat_df ):
    all_process_metrics = ''
 
@@ -222,6 +233,7 @@ def getStallingsMetrics(file_path_p, repo_path_p, org, full_ds_cat_df ):
    # print file_date_list
    if (len(file_added_lines)==len(file_defect_stat)):
        print file_defect_stat, file_added_lines, '='
+       getPrevMetricData(file_defect_stat, file_added_lines, 5)
    else:
        # date_to_add_map = getDateAddMap(file_date_list, file_added_lines)
        # # print date_to_add_map
