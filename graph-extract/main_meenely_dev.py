@@ -3,6 +3,7 @@ Akond Rahman
 Feb 04, 2018
 Meenely's Dev Network
 '''
+import cPickle as pickle
 import os
 import csv
 import itertools
@@ -21,8 +22,10 @@ def getGitProgrammerInfo(param_file_path, repo_path):
    node_cnt            = len(np.unique(author_count_output)) ## get node count
    ## create edges using combinations
    ## get unique author names
-   uni_aut_names = np.unique(author_count_output)
-   temp_edge_list = list(itertools.permutations(uni_aut_names, 2))
+   # uni_aut_names = np.unique(author_count_output)
+   # gettign values to satsify igraph's integer requriement
+   uni_aut_ = range(0, node_cnt)
+   temp_edge_list = list(itertools.permutations(uni_aut_, 2))
    edge_list = [(x_[0], x_[1]) for x_ in temp_edge_list if x_[0] != x_[1]] ## used list comprehension to egenrate valid edges
    return (edge_list, node_cnt)
 
@@ -39,8 +42,10 @@ def getHgProgrammerInfo(param_file_path, repo_path):
 
    ## create edges using combinations
    ## get unique author names
-   uni_aut_names = np.unique(author_count_output)
-   temp_edge_list = list(itertools.permutations(uni_aut_names, 2))
+   # uni_aut_names = np.unique(author_count_output)
+   # gettign values to satsify igraph's integer requriement
+   uni_aut_ = range(0, node_cnt)
+   temp_edge_list = list(itertools.permutations(uni_aut_, 2))
    edge_list = [(x_[0], x_[1]) for x_ in temp_edge_list if x_[0] != x_[1]] ## used list comprehension to egenrate valid edges
    return (edge_list, node_cnt)
 
@@ -71,7 +76,7 @@ def getGraphForFiles(file_path_p):
 
 if __name__=='__main__':
     ### INPUT
-    theCompleteCategFile='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Cisco_Categ_For_DB.csv'
+    # theCompleteCategFile='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Cisco_Categ_For_DB.csv'
     # theCompleteCategFile='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Mirantis_Categ_For_DB.csv'
     # theCompleteCategFile='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Mozilla.Final.Categ.csv'
     # theCompleteCategFile='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Openstack.WithoutBadBoys.Final.Categ.csv'
@@ -80,7 +85,7 @@ if __name__=='__main__':
 
 
     ### OUTPUT
-    datasetFile2Save='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dev-ds/CIS.PKL'
+    # datasetFile2Save='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dev-ds/CIS.PKL'
     # datasetFile2Save='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dev-ds/MIR.PKL'
     # datasetFile2Save='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dev-ds/MOZ.PKL'
     # datasetFile2Save='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/dev-ds/OST.PKL'

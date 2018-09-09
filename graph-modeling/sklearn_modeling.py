@@ -1,3 +1,9 @@
+'''
+Sep 23, 2017
+Akond Rahman
+Sci-kit learn materials 
+'''
+
 from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB
 from sklearn.metrics import precision_score, recall_score, f1_score
 import numpy as np, pandas as pd

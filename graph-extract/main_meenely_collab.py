@@ -15,8 +15,7 @@ def createEdges(comm_auth_dict, file_p):
     devCnt   = 0
     for k_, v_ in comm_auth_dict.iteritems():
         devCnt    += 1
-        name2save = 'Dev_' + str(devCnt)
-        tup_ = (name2save, file_p, v_)
+        tup_ = (0, devCnt, v_) ## 0 reserved for file anme , need itnegers as igrpah needs itnegeers
         list2ret.append(tup_)
     return list2ret
 
@@ -94,7 +93,7 @@ def getGraphData(file_path_p, repo_path_p):
     # print 'Processing {} ...'.format(file_path_p)
     return graph_per_file
 
-def getEdgeForFiles(file_path_p):
+def getEdgeForFiles(file_path_p): 
     output_dict = {}
     with open(file_path_p, 'rU') as file_:
       reader_ = csv.reader(file_)
