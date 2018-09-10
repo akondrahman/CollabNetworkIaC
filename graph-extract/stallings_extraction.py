@@ -13,8 +13,7 @@ def getAllProcessMetricsForSingleFile(full_path_param, repo_path_param, org_of_f
       print process_metrics
       print "Generated the process metrics ... "
       print "-"*50
-      all_metric_as_str_for_file      = org_of_file + ',' + full_path_param + ',' + process_metrics
-      return all_metric_as_str_for_file
+      return process_metrics
 
 def getAllProcessMetricForAllFiles(pupp_map_dict_param, datasetFile2Save, org_name, full_categ_df):
    str2ret=''
@@ -23,9 +22,8 @@ def getAllProcessMetricForAllFiles(pupp_map_dict_param, datasetFile2Save, org_na
            repo_, defect_status = details_
            if (file_!= 'WTF') and (os.path.exists(file_)):
               fileCount = fileCount + 1
-              print "Analyzing ... \nfile#{}\nfile:{}\nrepo:{}".format(fileCount, file_, repo_)
               all_metric_for_this_file = getAllProcessMetricsForSingleFile(file_, repo_, org_name, full_categ_df)
-              str2ret = str2ret + all_metric_for_this_file + defect_status + '\n'
+              str2ret = str2ret + all_metric_for_this_file 
               print "="*75
    dump_stats = stallings_miner.createDataset(str2ret, datasetFile2Save)
    print "Dumped a file of {} bytes".format(dump_stats)

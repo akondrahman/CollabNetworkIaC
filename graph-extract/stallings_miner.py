@@ -58,7 +58,7 @@ def getDate(param_file_path, repo_path):
    return dateList
 
 
-def getDeletedChurnMetrics(param_file_path, repo_path):
+def getDeletedLines(param_file_path, repo_path):
    totalDeletedLinesForChurn = 0
 
    cdCommand         = "cd " + repo_path + " ; "
@@ -69,93 +69,20 @@ def getDeletedChurnMetrics(param_file_path, repo_path):
    del_churn_output = subprocess.check_output(['bash','-c', command2Run])
    del_churn_output = del_churn_output.split('\n')
    del_churn_output = [x_ for x_ in del_churn_output if x_!='']
-   del_churn_output = [int(y_) for y_ in del_churn_output if y_.isdigit()]
-   #print del_churn_output
-   totalDeletedLinesForChurn = sum(del_churn_output)
-   #print totalDeletedLinesForChurn
-   return totalDeletedLinesForChurn
+   deletion_output  = [int(y_) for y_ in del_churn_output if y_.isdigit()]
+
+   return deletion_output
 
 
-
-
-def getAverageAndTotalChangedLines(param_file_path, repo_path):
-   cdCommand         = "cd " + repo_path + " ; "
-   theFile           = os.path.relpath(param_file_path, repo_path)
-   churnDeletedCommand = " git log --numstat --oneline "+ theFile +" | grep '" + theFile + "' | awk '{ print $2 }' "
-   command2Run = cdCommand + churnDeletedCommand
-
-   del_churn_output = subprocess.check_output(['bash','-c', command2Run])
-   del_churn_output = del_churn_output.split('\n')
-   del_churn_output = [x_ for x_ in del_churn_output if x_!='']
-   del_churn_output = [int(y_) for y_ in del_churn_output if y_.isdigit()]
-
-   cdCommand         = "cd " + repo_path + " ; "
-   theFile           = os.path.relpath(param_file_path, repo_path)
-   churnAddedCommand = " git log --numstat --oneline "+ theFile +" | grep '" + theFile + "' | awk '{ print $1 }' "
-   command2Run = cdCommand + churnAddedCommand
-
-   add_churn_output = subprocess.check_output(['bash','-c', command2Run])
-   add_churn_output = add_churn_output.split('\n')
-   add_churn_output = [x_ for x_ in add_churn_output if x_!='']
-   add_churn_output = [int(y_) for y_ in add_churn_output if y_.isdigit()]
-
-   chanegHolder     = add_churn_output + del_churn_output
-   #print chanegHolder
-   avgChangeLOC     = np.mean(chanegHolder)
-   sumChangeLOC     = sum(chanegHolder)
-   #print avgChangeLOC
-   return avgChangeLOC, sumChangeLOC
-
-def getMinorContribCount(param_file_path, repo_path, sloc):
-   minorList = []
-   cdCommand         = "cd " + repo_path + " ; "
-   theFile           = os.path.relpath(param_file_path, repo_path)
-   blameCommand      = " git blame " + theFile + "  | awk '{print $2}'  | cut -d'(' -f2"
-   command2Run       = cdCommand + blameCommand
-
-   blame_output   = subprocess.check_output(['bash','-c', command2Run])
-   blame_output   = blame_output.split('\n')
-   blame_output   = [x_ for x_ in blame_output if x_!='']
-   author_contrib = dict(Counter(blame_output))
-   #print author_contrib
-   for author, contribs in author_contrib.items():
-      if((float(contribs)/float(sloc)) < 0.05):
-        minorList.append(author)
-   return len(minorList)
-
-
-# useful for task/responsibility switching as well
-
-def getHighestContribsPerc(param_file_path, repo_path, sloc):
-   cdCommand         = "cd " + repo_path + " ; "
-   theFile           = os.path.relpath(param_file_path, repo_path)
-   blameCommand      = " git blame " + theFile + "  | awk '{print $2}'  | cut -d'(' -f2"
-   command2Run       = cdCommand + blameCommand
-
-   blame_output     = subprocess.check_output(['bash','-c', command2Run])
-   blame_output     = blame_output.split('\n')
-   blame_output     = [x_ for x_ in blame_output if x_!='']
-   author_contrib   = dict(Counter(blame_output))
-   #print author_contrib
-   if (len(author_contrib) > 0):
-     highest_author   = max(author_contrib.iteritems(), key=operator.itemgetter(1))[0]
-     highest_contr    = author_contrib[highest_author]
-     #print "LOC:{}, A:{}, C:{}, dict:{}".format(sloc, highest_author, highest_contr, author_contrib)
-   else:
-     highest_contr = 0
-   if sloc <= 0 :
-       sloc += 1
-   return (round(float(highest_contr)/float(sloc), 5))*100
 
 
 def createDataset(str2Dump, datasetNameParam):
    headerOfFile0='ORG,SCRIPT_PATH,'
    headerOfFile1='PREV_DEFECT_HISTORY,AVG_ADDPERLOC,'
    headerOfFile2='MED_ADDPERLOC,AVG_DELPERLOC,MED_DELPERLOC,'
-   headerOfFile3='CREATION_DATE,'
-   headerOfFile4='CURR_DEFECT_STATUS'
+   headerOfFile3='CURR_DEFECT_STATUS'
 
-   headerStr = headerOfFile0 + headerOfFile1 + headerOfFile2 + headerOfFile3  + headerOfFile4
+   headerStr = headerOfFile0 + headerOfFile1 + headerOfFile2  + headerOfFile4
 
    str2Write = headerStr + '\n' + str2Dump
    return dumpContentIntoFile(str2Write, datasetNameParam)
@@ -204,12 +131,13 @@ def makeChunks(l, n):
     for i in range(0, len(l), n):
         yield l[i:i+n]
 
-def getIndiMetrics(defect_list, added_list, repo_p, file_p):
+def getIndiMetrics(defect_list, added_list, deleted_list, repo_p, file_p):
       prev_defect_status, curr_defect_status = '', ''
       #before calculation remove current data point
       if (len(defect_list) > 1):
          curr_defect_value = defect_list.pop()
          added_list.pop()
+         deleted_list.pop()
       else:
          curr_defect_value = defect_list[0]
       if curr_defect_value != 'N':
@@ -222,47 +150,41 @@ def getIndiMetrics(defect_list, added_list, repo_p, file_p):
           prev_defect_status = '0'
       else:
           prev_defect_status = '1'
-      str_to_ret = , repo_p + ',' + file_p + ',' + prev_defect_status + ',' + str(np.mean(added_list)) + ',' + str(np.median(added_list)) + ',' + curr_defect_status + '\n'
+      str_to_ret =  repo_p + ',' + file_p + ',' + prev_defect_status + ',' + str(np.mean(added_list)) + ',' + str(np.median(added_list)) + ',' + str(np.mean(deleted_list)) + ',' + str(np.median(deleted_list))  + ',' + curr_defect_status + '\n'
       return str_to_ret
 
-def getPrevMetricData(defect_list, added_list, window_p, repo_p, file_p):
+def getPrevMetricData(defect_list, added_list, deleted_list, window_p, repo_p, file_p):
     prev_defect_status = '0'
     str_to_ret = ''
     if(len(defect_list) > window_p):
       splitted_defect_list   = list(makeChunks(defect_list, window_p))
       splitted_addition_list = list(makeChunks(added_list, window_p))
+      splitted_deletion_list = list(makeChunks(deleted_list, window_p))
       for ind_ in xrange(len(splitted_defect_list)):
-         indi_defect_list, indi_added_list = splitted_defect_list[ind_] , splitted_addition_list[ind_]
-         str_ = getIndiMetrics(indi_defect_list, indi_added_list, repo_p, file_p)
+         indi_defect_list, indi_added_list, indi_deleted_list = splitted_defect_list[ind_] , splitted_addition_list[ind_], splitted_deletion_list[ind_]
+         str_ = getIndiMetrics(indi_defect_list, indi_added_list, indi_deleted_list, repo_p, file_p)
          str_to_ret = str_to_ret + str_
     else:
-         str_to_ret = getIndiMetrics(defect_list, added_list)
+         str_to_ret = getIndiMetrics(defect_list, added_list, deleted_list, repo_p, file_p)
 
     return str_to_ret
 
 def getStallingsMetrics(file_path_p, repo_path_p, org, full_ds_cat_df , window):
-   all_process_metrics = ''
-
-   headerOfFile0='ORG,SCRIPT_PATH,'
-   headerOfFile1='PREV_DEFECT_HISTORY,AVG_ADDPERLOC,'
-   headerOfFile2='MED_ADDPERLOC,AVG_DELPERLOC,MED_DELPERLOC,'
-   headerOfFile3='CREATION_DATE,'
-   headerOfFile4='CURR_DEFECT_STATUS'
-
    # print full_ds_cat_df.head()
    file_df   = full_ds_cat_df[full_ds_cat_df['filepath']==file_path_p]
    sorted_df = file_df.sort_values(by='msgid', ascending=True)
    # print sorted_df.head()
 
-   file_added_lines = getAddedLines(file_path_p, repo_path_p)
-   file_defect_stat = sorted_df['categ'].tolist()
-   file_date_list   = getDate(file_path_p, repo_path_p)
+   file_added_lines   = getAddedLines(file_path_p, repo_path_p)
+   file_deleted_lines = getDeletedLines(file_path_p, repo_path_p)
+   file_defect_stat   = sorted_df['categ'].tolist()
+   file_date_list     = getDate(file_path_p, repo_path_p)
 
    # print file_added_lines
    # print file_date_list
    if (len(file_added_lines)==len(file_defect_stat)):
        # print file_defect_stat, file_added_lines, '='
-       per_file_str = getPrevMetricData(file_defect_stat, file_added_lines, window)
+       per_file_str = getPrevMetricData(file_defect_stat, file_added_lines, file_deleted_lines, window, repo_path_p, file_path_p)
    else:
        # date_to_add_map = getDateAddMap(file_date_list, file_added_lines)
        # # print date_to_add_map
@@ -275,18 +197,26 @@ def getStallingsMetrics(file_path_p, repo_path_p, org, full_ds_cat_df , window):
        #
        # print file_defect_stat
        # print final_added_lines
-       defect_list, addition_list = [], []
+       defect_list, addition_list, deletion_list = [], [], []
+
        rev_def_stat = list(reversed(file_defect_stat))
        rev_add_line = list(reversed(file_added_lines))
+       rev_del_line = list(reversed(file_deleted_lines))
+
        for ind in xrange(len(rev_def_stat)):
            if ind < len(rev_add_line):
+
               def_sta = rev_def_stat[ind]
               add_lin = rev_add_line[ind]
+              del_lin = rev_del_line[ind]
+
               defect_list.append(def_sta)
               addition_list.append(add_lin)
-       # print defect_list, addition_list, '>'
-       per_file_str = getPrevMetricData(file_defect_stat, file_added_lines, window, repo_path_p, file_path_p)
+              deletion_list.append(del_lin)
 
-   print per_file_str
+       # print defect_list, addition_list, '>'
+       per_file_str = getPrevMetricData(defect_list, addition_list, deletion_list, window, repo_path_p, file_path_p)
+
+   # print per_file_str
 
    return per_file_str
