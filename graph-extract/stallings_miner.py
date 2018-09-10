@@ -82,7 +82,7 @@ def createDataset(str2Dump, datasetNameParam):
    headerOfFile2='MED_ADDPERLOC,AVG_DELPERLOC,MED_DELPERLOC,'
    headerOfFile3='CURR_DEFECT_STATUS'
 
-   headerStr = headerOfFile0 + headerOfFile1 + headerOfFile2  + headerOfFile4
+   headerStr = headerOfFile0 + headerOfFile1 + headerOfFile2  + headerOfFile3
 
    str2Write = headerStr + '\n' + str2Dump
    return dumpContentIntoFile(str2Write, datasetNameParam)
@@ -204,7 +204,7 @@ def getStallingsMetrics(file_path_p, repo_path_p, org, full_ds_cat_df , window):
        rev_del_line = list(reversed(file_deleted_lines))
 
        for ind in xrange(len(rev_def_stat)):
-           if ind < len(rev_add_line):
+           if (ind < len(rev_add_line)) and (ind < len(rev_del_line)):
 
               def_sta = rev_def_stat[ind]
               add_lin = rev_add_line[ind]
