@@ -36,9 +36,10 @@ if __name__=='__main__':
   # theCompleteCategFile='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Wikimedia.Categ.For.CSC712.csv'
   # datasetFile2Save='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/output/exploration-stallings/WIKI.OUT.csv'
 
-  org_name = '/Users/akond/PUPP_REPOS/openstack-downloads/'
-  theCompleteCategFile='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Openstack.Categ.For.CSC712.csv'
-  datasetFile2Save='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/output/exploration-stallings/OSTK.OUT.csv'
+  # org_name = '/Users/akond/PUPP_REPOS/openstack-downloads/'
+  # theCompleteCategFile='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Openstack.Categ.For.CSC712.csv'
+  # datasetFile2Save='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/output/exploration-stallings/OSTK.OUT.csv'
+
 
   print "Started at:", stallings_miner.giveTimeStamp()
   fullPuppMap   = stallings_miner.getPuppetFileDetails(theCompleteCategFile, org_name)
