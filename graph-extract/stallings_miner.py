@@ -110,7 +110,8 @@ def getMoziDate(param_file_path, repo_path):
    dt_churn_output = subprocess.check_output(['bash','-c', command2Run])
    dt_churn_output = dt_churn_output.split('\n')
    monthAndYeatList = [x_ for x_ in dt_churn_output if x_!='']
-   print monthAndYeatList
+   # print monthAndYeatList
+   dateList = [x_.split('-')[0] + x_.split('-')[1] for x_ in monthAndYeatList]
    # formatDate = lambda x_ : '0' + x_ if (len(x_) < 2) else x_
    #
    # for dob in monthAndYeatList:

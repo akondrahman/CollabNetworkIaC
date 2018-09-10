@@ -15,7 +15,7 @@ def getAllProcessMetricsForSingleFile(full_path_param, repo_path_param, org_of_f
       print "-"*50
       return process_metrics
 
-def getAllProcessMetricForAllFiles(pupp_map_dict_param, datasetFile2Save, org_name, full_categ_df, window_size, mozi_flag = False):
+def getAllProcessMetricForAllFiles(pupp_map_dict_param, datasetFile2Save, org_name, full_categ_df, window_size, mozi_flag ):
    str2ret=''
    fileCount = 0
    for file_, details_ in pupp_map_dict_param.items():
@@ -45,7 +45,7 @@ if __name__=='__main__':
   org_name = '/Users/akond/PUPP_REPOS/mozilla-releng-downloads/'
   theCompleteCategFile='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Mozilla.Categ.For.CSC712.csv'
   datasetFile2Save='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/output/exploration-stallings/MOZI.OUT.csv'
-  mozi_flag = True 
+  mozi_flag = True
 
 
   print "Started at:", stallings_miner.giveTimeStamp()
