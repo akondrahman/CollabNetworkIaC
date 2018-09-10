@@ -41,7 +41,7 @@ def getDate(param_file_path, repo_path):
    dt_churn_output = subprocess.check_output(['bash','-c', command2Run])
    dt_churn_output = dt_churn_output.split('\n')
    dt_churn_output = [x_ for x_ in dt_churn_output if x_!='']
-   # print dt_churn_output
+
    formatDate = lambda x_ : '0' + x_ if (len(x_) < 2) else x_
 
    for dob in dt_churn_output:
@@ -73,8 +73,58 @@ def getDeletedLines(param_file_path, repo_path):
 
    return deletion_output
 
+def getMoziAddedLines(param_file_path, repo_path):
+   cdCommand         = "cd " + repo_path + " ; "
+   theFile           = os.path.relpath(param_file_path, repo_path)
+   churnAddedCommand = "hg churn --diffstat " + theFile + " | cut -d'+' -f2 | cut -d'/' -f1"
+   command2Run = cdCommand + churnAddedCommand
 
+   add_churn_output = subprocess.check_output(['bash','-c', command2Run])
+   add_churn_output = add_churn_output.split('\n')
+   add_churn_output = [x_ for x_ in add_churn_output if x_!='']
+   add_churn_output = [x_ for x_ in add_churn_output if '@' not in x_]
+   add_churn_output = [int(y_) for y_ in add_churn_output if (y_.isdigit())==True]
 
+   return add_churn_output
+
+def getMoziDeletedLines(param_file_path, repo_path):
+   cdCommand         = "cd " + repo_path + " ; "
+   theFile           = os.path.relpath(param_file_path, repo_path)
+   churnDeletedCommand = " hg churn --diffstat " + theFile + " | cut -d'+' -f2 | cut -d'/' -f2 | cut -d'-' -f2"
+   command2Run = cdCommand + churnDeletedCommand
+
+   del_churn_output = subprocess.check_output(['bash','-c', command2Run])
+   del_churn_output = del_churn_output.split('\n')
+   del_churn_output = [x_ for x_ in del_churn_output if x_!='']
+   del_churn_output = [x_ for x_ in del_churn_output if '@' not in x_]
+   del_churn_output = [int(y_) for y_ in del_churn_output]
+
+   return del_churn_output
+
+def getMoziDate(param_file_path, repo_path):
+   cdCommand            = "cd " + repo_path + " ; "
+   theFile              = os.path.relpath(param_file_path, repo_path)
+   commitCommand        = " hg churn --dateformat '%Y-%m-%d' " +  theFile +    " | awk '{print $1 }' "
+   command2Run          = cdCommand + commitCommand
+
+   dt_churn_output = subprocess.check_output(['bash','-c', command2Run])
+   dt_churn_output = dt_churn_output.split('\n')
+   monthAndYeatList = [x_ for x_ in dt_churn_output if x_!='']
+   print monthAndYeatList
+   # formatDate = lambda x_ : '0' + x_ if (len(x_) < 2) else x_
+   #
+   # for dob in monthAndYeatList:
+   #     year = dob[-4:]
+   #     mont = monthDict[dob[0:3]]
+   #     if len(dob) > 8:
+   #        day = dob[3:5]
+   #     else:
+   #        day = '0' + dob[3:4]
+   #     # full_date = year + '-' + mont + '-' + day
+   #     full_date = year + '-' + mont
+   #     dateList.append(full_date)
+
+   return dateList
 
 def createDataset(str2Dump, datasetNameParam):
    headerOfFile0='ORG,SCRIPT_PATH,'
@@ -169,16 +219,23 @@ def getPrevMetricData(defect_list, added_list, deleted_list, window_p, repo_p, f
 
     return str_to_ret
 
-def getStallingsMetrics(file_path_p, repo_path_p, org, full_ds_cat_df , window):
+def getStallingsMetrics(file_path_p, repo_path_p, org, full_ds_cat_df , window, mozi_flag):
    # print full_ds_cat_df.head()
    file_df   = full_ds_cat_df[full_ds_cat_df['filepath']==file_path_p]
    sorted_df = file_df.sort_values(by='msgid', ascending=True)
    # print sorted_df.head()
 
-   file_added_lines   = getAddedLines(file_path_p, repo_path_p)
-   file_deleted_lines = getDeletedLines(file_path_p, repo_path_p)
+   if mozi_flag:
+       file_added_lines   = getMoziAddedLines(file_path_p, repo_path_p)
+       file_deleted_lines = getMoziDeletedLines(file_path_p, repo_path_p)
+       file_date_list     = getMoziDate(file_path_p, repo_path_p)
+   else:
+       file_added_lines   = getAddedLines(file_path_p, repo_path_p)
+       file_deleted_lines = getDeletedLines(file_path_p, repo_path_p)
+       file_date_list     = getDate(file_path_p, repo_path_p)
+
    file_defect_stat   = sorted_df['categ'].tolist()
-   file_date_list     = getDate(file_path_p, repo_path_p)
+
 
    # print file_added_lines
    # print file_date_list
