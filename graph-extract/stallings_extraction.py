@@ -32,20 +32,20 @@ def getAllProcessMetricForAllFiles(pupp_map_dict_param, datasetFile2Save, org_na
 if __name__=='__main__':
   window_ = 5
 
-  # org_name = '/Users/akond/PUPP_REPOS/wikimedia-downloads/'
-  # theCompleteCategFile='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Wikimedia.Categ.For.CSC712.csv'
-  # datasetFile2Save='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/output/exploration-stallings/WIKI.OUT.csv'
-  # mozi_flag = False
+  org_name = '/Users/akond/PUPP_REPOS/wikimedia-downloads/'
+  theCompleteCategFile='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Wikimedia.Categ.For.CSC712.csv'
+  datasetFile2Save='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/output/exploration-stallings/WIKI.OUT.csv'
+  mozi_flag = False
 
   # org_name = '/Users/akond/PUPP_REPOS/openstack-downloads/'
   # theCompleteCategFile='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Openstack.Categ.For.CSC712.csv'
   # datasetFile2Save='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/output/exploration-stallings/OSTK.OUT.csv'
   # mozi_flag = False
 
-  org_name = '/Users/akond/PUPP_REPOS/mozilla-releng-downloads/'
-  theCompleteCategFile='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Mozilla.Categ.For.CSC712.csv'
-  datasetFile2Save='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/output/exploration-stallings/MOZI.OUT.csv'
-  mozi_flag = True
+  # org_name = '/Users/akond/PUPP_REPOS/mozilla-releng-downloads/'
+  # theCompleteCategFile='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Defect-Categ-Project/output/Mozilla.Categ.For.CSC712.csv'
+  # datasetFile2Save='/Users/akond/Documents/AkondOneDrive/OneDrive/IaC-Graph/output/exploration-stallings/MOZI.OUT.csv'
+  # mozi_flag = True
 
 
   print "Started at:", stallings_miner.giveTimeStamp()

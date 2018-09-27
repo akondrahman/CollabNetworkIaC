@@ -129,9 +129,9 @@ def getMoziDate(param_file_path, repo_path):
 
 def createDataset(str2Dump, datasetNameParam):
    headerOfFile0='ORG,SCRIPT_PATH,'
-   headerOfFile1='PREV_DEFECT_HISTORY,AVG_ADDPERLOC,'
+   headerOfFile1='PREV_DEFECT_HISTORY,PREV_DEFECT_COUNT,AVG_ADDPERLOC,'
    headerOfFile2='MED_ADDPERLOC,AVG_DELPERLOC,MED_DELPERLOC,'
-   headerOfFile3='CURR_DEFECT_STATUS'
+   headerOfFile3='CURR_DEFECT_CATEGORY,CURR_DEFECT_STATUS'
 
    headerStr = headerOfFile0 + headerOfFile1 + headerOfFile2  + headerOfFile3
 
@@ -184,6 +184,9 @@ def makeChunks(l, n):
 
 def getIndiMetrics(defect_list, added_list, deleted_list, repo_p, file_p):
       prev_defect_status, curr_defect_status = '', ''
+      #keep track of prev defect count 
+      prev_def_cnt = 0 
+      
       #before calculation remove current data point
       if (len(defect_list) > 1):
          curr_defect_value = defect_list.pop()
@@ -197,11 +200,15 @@ def getIndiMetrics(defect_list, added_list, deleted_list, repo_p, file_p):
           curr_defect_status = '0'
       # now do calculation
       defects = np.unique(defect_list)
+      # keep track of defect count 
+      only_def_lis = [x_ for x_ in defect_list if x_ != 'N']
+      prev_def_cnt = len(only_def_lis) 
+
       if ((len(defects) == 1) and (defects[0]=='N')):
           prev_defect_status = '0'
       else:
           prev_defect_status = '1'
-      str_to_ret =  repo_p + ',' + file_p + ',' + prev_defect_status + ',' + str(np.mean(added_list)) + ',' + str(np.median(added_list)) + ',' + str(np.mean(deleted_list)) + ',' + str(np.median(deleted_list))  + ',' + curr_defect_status + '\n'
+      str_to_ret =  repo_p + ',' + file_p + ',' + prev_defect_status + ',' + str(prev_def_cnt) + ',' + str(np.mean(added_list)) + ',' + str(np.median(added_list)) + ',' + str(np.mean(deleted_list)) + ',' + str(np.median(deleted_list))  + ',' + curr_defect_value + ',' + curr_defect_status + '\n'
       return str_to_ret
 
 def getPrevMetricData(defect_list, added_list, deleted_list, window_p, repo_p, file_p):
